@@ -1,0 +1,10 @@
+internal notes, NOT FOR AI agent
+
+The workflow chain is now:
+
+/speckit.constitution — establish principles
+/speckit.specify — define requirements
+/speckit.plan — technical plan
+/speckit.tasks — task breakdown
+/speckit.taskstoissues — push to GitHub Issues (built-in)
+/speckit.implementfromissues — iterative issue-driven implementation (custom)
