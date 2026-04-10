@@ -69,9 +69,7 @@ An AI-powered Pokemon fusion generator. It takes two random (or handpicked) Poke
 ## How this will be developed?
 
 - Github copilot using sonnet
-- speck kit with a twist:
-    - everything will be speced using spec kit and then stories created on github issues
-    - 'implement' should pickup issues and operate accordingly
+- speck kit with a twist 
 - subagents are encouraged
 - mcp for github
 
