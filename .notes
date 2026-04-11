@@ -8,3 +8,6 @@ The workflow chain is now:
 /speckit.tasks — task breakdown
 /speckit.taskstoissues — push to GitHub Issues (built-in)
 /speckit.implementfromissues — iterative issue-driven implementation (custom)
+
+
+i used clarify several times even until there were no clarifications pending
