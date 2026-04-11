@@ -1,0 +1,92 @@
+# Implementation Plan: PokeFusions Core
+
+**Branch**: `001-pokefusions-core` | **Date**: 2026-04-11 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/001-pokefusions-core/spec.md`
+
+## Summary
+
+AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pokemon (random or manual selection) into a unique creation with AI-generated names/descriptions, averaged stats, and optional AI images. Built with React + TypeScript + Vite + Tailwind CSS, persisting to localStorage, deployed to GitHub Pages. Hugging Face inference API provides the AI text generation; PokeAPI and local Stable Diffusion are optional integrations.
+
+## Technical Context
+
+**Language/Version**: TypeScript 5.x (strict mode)
+**Primary Dependencies**: React 18, Vite 5, Tailwind CSS 3, DOMPurify (XSS sanitization)
+**Storage**: Browser localStorage (saved fusions, API token, settings)
+**Testing**: Vitest + React Testing Library
+**Target Platform**: Modern browsers (latest 2 versions of Chrome, Firefox, Safari, Edge); deployed to GitHub Pages
+**Project Type**: Single-page web application (SPA)
+**Performance Goals**: Fusion generation ≤15s end-to-end (per SC-001); UI feedback within 1s of user action (per SC-004); 60fps animations
+**Constraints**: No server-side backend; localStorage capacity (~5–10MB); no offline mode; single-user local use
+**Scale/Scope**: 809 Pokemon (bundled JSON), single user, ~6 main views/states (home, selection, fusion card, collection, settings, empty states)
+
+## Constitution Check
+
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+| # | Principle | Status | Evidence |
+|---|-----------|--------|----------|
+| I | Graceful Degradation | PASS | Design separates required (HF text) from optional (PokeAPI, Stable Diffusion) services. FR-020 mandates silent failure for optional services. FR-012 defines image placeholder fallback. FR-016 requires error+retry for required service failures. |
+| II | Local-First Architecture | PASS | All persistence via localStorage (FR-009, FR-022). No server-side DB, accounts, or cloud sync. Image generation is local-only optional. Deployed via GitHub Pages (static hosting). |
+| III | Spec-Driven Workflow | PASS | This plan is generated from spec.md via `/speckit.plan`. Implementation will follow the full Spec Kit pipeline through tasks and issues. |
+| IV | Deterministic Core, AI-Augmented Surface | PASS | Stat averaging (FR-006), type compatibility filtering (FR-002), and Pokemon data lookup are deterministic. AI generates only names (FR-004), descriptions (FR-005), and optional images (FR-013) — all on the surface layer. |
+| V | Responsive & Accessible UX | PASS | FR-014 (skeletons), FR-015 (toasts), FR-016 (error+retry), FR-017 (dark mode), FR-018 (responsive), FR-019 (animations) all specified. SC-005 defines viewport range 320px–2560px. |
+
+**Gate Result**: ALL PASS — proceeding to Phase 0.
+
+## Project Structure
+
+### Documentation (this feature)
+
+```text
+specs/[###-feature]/
+├── plan.md              # This file (/speckit.plan command output)
+├── research.md          # Phase 0 output (/speckit.plan command)
+├── data-model.md        # Phase 1 output (/speckit.plan command)
+├── quickstart.md        # Phase 1 output (/speckit.plan command)
+├── contracts/           # Phase 1 output (/speckit.plan command)
+└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+```
+
+### Source Code (repository root)
+
+```text
+src/
+├── components/           # React UI components
+│   ├── FusionCard/       # Fusion card display (stats, image, actions)
+│   ├── PokemonSelector/  # Manual Pokemon selection UI
+│   ├── Collection/       # Saved fusions gallery
+│   ├── Settings/         # API token & model config panel
+│   └── ui/               # Shared UI primitives (Toast, Skeleton, Button, Badge)
+├── data/
+│   └── pokedex.json      # Bundled 809 Pokemon dataset
+├── hooks/                # Custom React hooks (useFusion, useLocalStorage, useToast)
+├── lib/                  # Pure logic (no React dependency)
+│   ├── fusion.ts         # Deterministic fusion mechanics (stats, names, compatibility)
+│   ├── pokemon.ts        # Pokemon data access & type utilities
+│   └── sanitize.ts       # DOMPurify wrapper for AI output
+├── services/             # External API integrations
+│   ├── huggingface.ts    # HF chat completions client (required)
+│   ├── pokeapi.ts        # PokeAPI flavor text client (optional)
+│   └── stablediffusion.ts # Local SD WebUI client (optional)
+├── context/              # React Context providers
+│   ├── FusionContext.tsx  # Fusion state management
+│   └── SettingsContext.tsx # API token, model ID, theme
+├── pages/                # Top-level route views
+│   ├── HomePage.tsx       # Random fusion generation
+│   ├── SelectPage.tsx     # Manual Pokemon selection
+│   └── CollectionPage.tsx # Saved fusions browsing
+├── App.tsx               # Root component, routing, providers
+├── main.tsx              # Entry point
+└── index.css             # Tailwind directives + global styles
+
+tests/
+├── unit/                 # Pure logic tests (fusion, pokemon, sanitize)
+├── integration/          # Component + service integration tests
+└── setup.ts              # Vitest setup (MSW, mocks)
+```
+
+**Structure Decision**: Single SPA project. All code under `src/` with clear separation between deterministic logic (`lib/`), React components (`components/`), external integrations (`services/`), and state management (`context/`). Tests mirror the `lib/` and `components/` structure.
+
+## Complexity Tracking
+
+No constitution violations identified. All principles pass cleanly with this design.
