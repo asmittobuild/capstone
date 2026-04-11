@@ -61,7 +61,7 @@ GET /sdapi/v1/options
 | Scenario | App Behavior |
 |----------|-------------|
 | Connection refused | Show placeholder image (FR-012) |
-| Timeout (>30s) | Abort, show placeholder image |
+| Timeout (>15s) | Abort, show placeholder image |
 | 500 Server error | Show placeholder image |
 
 **Image generation failure must NEVER block or interrupt fusion creation** (Constitution Principle I, FR-020).

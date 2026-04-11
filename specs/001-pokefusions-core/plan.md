@@ -58,7 +58,7 @@ src/
 │   └── ui/               # Shared UI primitives (Toast, Skeleton, Button, Badge)
 ├── data/
 │   └── pokedex.json      # Bundled 809 Pokemon dataset
-├── hooks/                # Custom React hooks (useFusion, useLocalStorage, useToast)
+├── hooks/                # Custom React hooks (useLocalStorage, useToast)
 ├── lib/                  # Pure logic (no React dependency)
 │   ├── fusion.ts         # Deterministic fusion mechanics (stats, names, compatibility)
 │   ├── pokemon.ts        # Pokemon data access & type utilities

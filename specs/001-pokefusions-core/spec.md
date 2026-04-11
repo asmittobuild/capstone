@@ -139,7 +139,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 ### Functional Requirements
 
 - **FR-001**: System MUST generate a fusion from two randomly selected compatible Pokemon with a single user action
-- **FR-002**: System MUST apply a type-compatibility filter when randomly selecting Pokemon pairs — pairs are excluded only if both Pokemon share the exact same type combination
+- **FR-002**: System MUST apply a type-compatibility check when randomly selecting Pokemon pairs — pairs are excluded only if both Pokemon share the exact same type combination
 - **FR-003**: System MUST allow users to manually select any two different Pokemon for fusion, bypassing the type-compatibility filter
 - **FR-004**: System MUST generate a blended fusion name from the two parent Pokemon names using AI
 - **FR-005**: System MUST generate unique descriptive text for each fusion using AI

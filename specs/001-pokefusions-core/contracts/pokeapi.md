@@ -50,6 +50,6 @@ No authentication required. No request body.
 |----------|-------------|
 | 404 (unknown species) | Skip flavor text, continue fusion |
 | Network error | Skip flavor text silently (FR-020) |
-| Timeout (>5s) | Abort, skip flavor text silently |
+| Timeout (>3s) | Abort, skip flavor text silently |
 
 **The app must NEVER block fusion generation due to PokeAPI failure** (Constitution Principle I).

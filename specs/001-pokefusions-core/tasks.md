@@ -84,7 +84,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T033 [P] [US2] Create PokemonSelector component with searchable/filterable grid of 809 Pokemon showing name, sprite placeholder, and types in src/components/PokemonSelector/PokemonSelector.tsx
+- [ ] T033 [P] [US2] Create PokemonSelector component with searchable/filterable virtualized grid of 809 Pokemon (virtualization or lazy loading for performance) showing name, sprite placeholder, and types in src/components/PokemonSelector/PokemonSelector.tsx
 - [ ] T034 [P] [US2] Create PokemonCard mini-component for each selectable Pokemon entry in the grid in src/components/PokemonSelector/PokemonCard.tsx
 - [ ] T035 [US2] Implement manual fusion generation flow in FusionContext: accept two specific Pokemon IDs, validate different Pokemon (FR-003), generate fusion same pipeline as random in src/context/FusionContext.tsx
 - [ ] T036 [US2] Create SelectPage with two selection slots, same-Pokemon validation message, search/filter bar, "Fuse" button, and fusion card output in src/pages/SelectPage.tsx
