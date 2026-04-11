@@ -55,7 +55,6 @@ src/
 │   ├── FusionCard/       # Fusion card display (stats, image, actions)
 │   ├── PokemonSelector/  # Manual Pokemon selection UI
 │   ├── Collection/       # Saved fusions gallery
-│   ├── Settings/         # API token & model config panel
 │   └── ui/               # Shared UI primitives (Toast, Skeleton, Button, Badge)
 ├── data/
 │   └── pokedex.json      # Bundled 809 Pokemon dataset

@@ -38,12 +38,12 @@
 - [ ] T010 [P] Implement DOMPurify sanitization wrapper with restricted allow-list (b, i, em, strong, p, br) in src/lib/sanitize.ts
 - [ ] T011 [P] Implement deterministic stat averaging function (Math.round per stat) in src/lib/fusion.ts
 - [ ] T012 [P] Implement type-compatibility check function (exclude pairs with identical type combinations) in src/lib/fusion.ts
-- [ ] T013 Implement Hugging Face chat completions client with auth, request/response parsing, rate-limit detection, and error handling in src/services/huggingface.ts
+- [ ] T013 Implement Hugging Face chat completions client with auth, request/response parsing, rate-limit detection (HTTP 429 + Retry-After header), automatic retry-once on empty or malformed AI responses, and error handling in src/services/huggingface.ts
 - [ ] T014 [P] Implement PokeAPI flavor text client with language filtering, version preference, in-memory caching, and silent fallback in src/services/pokeapi.ts
 - [ ] T015 [P] Implement Stable Diffusion WebUI client with availability probe, txt2img request, base64 response handling, and silent fallback in src/services/stablediffusion.ts
 - [ ] T016 [P] Implement useLocalStorage custom hook for typed get/set with JSON serialization and quota detection in src/hooks/useLocalStorage.ts
 - [ ] T017 [P] Implement useToast custom hook for toast notification state management (success, error, info with 3s auto-dismiss) in src/hooks/useToast.ts
-- [ ] T018 Implement SettingsContext provider with apiToken, modelId, theme state, localStorage persistence, and first-run detection in src/context/SettingsContext.tsx
+- [ ] T018 Implement SettingsContext provider with apiToken, modelId, theme state (light/dark/system), localStorage persistence, first-run detection, and dark mode class-based switching on document root (so all subsequent components can use Tailwind dark: variant from the start) in src/context/SettingsContext.tsx
 - [ ] T019 [P] Create Toast notification component with auto-dismiss animation and success/error/info variants in src/components/ui/Toast.tsx
 - [ ] T020 [P] Create SkeletonCard loading placeholder component with shimmer animation in src/components/ui/SkeletonCard.tsx
 - [ ] T021 [P] Create Button component with loading, disabled, and variant states in src/components/ui/Button.tsx
@@ -63,9 +63,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T025 [US1] Implement fusion generation orchestrator: random pair selection → stat averaging → HF text generation → optional PokeAPI flavor text → optional SD image → assemble Fusion object in src/lib/fusion.ts
+- [ ] T025 [US1] Implement fusion generation orchestrator: random pair selection → stat averaging → HF text generation (max 12s timeout) → optional PokeAPI flavor text (max 3s, abort if slower) → optional SD image (non-blocking, max 15s) → assemble Fusion object. Total text-generation path must complete within 15s per SC-001. In src/lib/fusion.ts
 - [ ] T026 [US1] Implement AI response parser to extract fusion name and description from HF chat completion content with fallback name generation in src/lib/fusion.ts
-- [ ] T027 [US1] Implement FusionContext provider with current fusion state, generate action, loading/error states, and rate-limit cooldown tracking in src/context/FusionContext.tsx
+- [ ] T027 [US1] Implement FusionContext provider with current fusion state, generate action, loading/error states, rate-limit cooldown timer (parse Retry-After / X-RateLimit-Reset headers), and Generate button disable/re-enable logic (FR-024) in src/context/FusionContext.tsx
 - [ ] T028 [P] [US1] Create FusionCard component displaying fusion name, parent names with TypeBadges, six color-coded stats (green/yellow/red by value) with total, sanitized AI description, image or Pokemon logo placeholder, creation timestamp, and action buttons in src/components/FusionCard/FusionCard.tsx
 - [ ] T029 [P] [US1] Create StatBar sub-component with color coding (green ≥100, yellow ≥50, red <50) and value display in src/components/FusionCard/StatBar.tsx
 - [ ] T030 [US1] Create HomePage with "Generate Fusion" button, API token check gate (FR-023), loading skeleton, error state with retry, rate-limit cooldown display, and fusion card output in src/pages/HomePage.tsx
@@ -100,9 +100,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Implement saved fusions state management in FusionContext: save (strip imageBase64 per FR-026), load from localStorage, delete, and localStorage quota check (FR-027) in src/context/FusionContext.tsx
+- [ ] T036 [US3] Implement saved fusions state management in FusionContext: save (strip imageBase64 per FR-026), load from localStorage, delete, localStorage quota check at ~80% capacity (show warning via StorageWarning), and block saves with informative message when storage is full (FR-027) in src/context/FusionContext.tsx
 - [ ] T037 [US3] Add Save and Delete action buttons to FusionCard with appropriate visibility (Save when unsaved, Delete when viewing collection) in src/components/FusionCard/FusionCard.tsx
-- [ ] T038 [P] [US3] Create Collection component displaying saved fusions as a grid of FusionCards with empty state message in src/components/Collection/Collection.tsx
+- [ ] T038 [P] [US3] Create Collection component displaying saved fusions as a grid of FusionCards, with an empty state component showing guidance message when no fusions are saved, in src/components/Collection/Collection.tsx and src/components/Collection/EmptyState.tsx
 - [ ] T039 [US3] Create CollectionPage with Collection component, empty state with guidance, and navigation in src/pages/CollectionPage.tsx
 
 **Checkpoint**: User Stories 1–3 are functional. Core experience is complete: generate, view, save, browse, delete.
@@ -149,11 +149,10 @@
 ### Implementation for User Story 6
 
 - [ ] T045 [US6] Create Settings page with API token input, model ID input with default value, and theme toggle (light/dark/system) in src/pages/SettingsPage.tsx
-- [ ] T046 [US6] Implement dark mode toggle logic in SettingsContext with system preference detection and class-based switching on document root in src/context/SettingsContext.tsx
+- [ ] T046 [US6] Implement system theme preference detection (prefers-color-scheme media query) and theme toggle UI refinement (light/dark/system selector) in src/context/SettingsContext.tsx
 - [ ] T047 [P] [US6] Add responsive layout and navigation (navbar with route links, mobile hamburger menu) in src/App.tsx
 - [ ] T048 [P] [US6] Add Tailwind responsive utilities to all page layouts for 320px–2560px viewport range in src/pages/HomePage.tsx, src/pages/SelectPage.tsx, src/pages/CollectionPage.tsx
 - [ ] T049 [P] [US6] Add CSS transitions and animations for card appearance, theme switching, toast enter/exit, and skeleton shimmer in src/index.css
-- [ ] T050 [US6] Add empty state component with guidance message for collection page when no fusions are saved in src/components/Collection/EmptyState.tsx
 
 **Checkpoint**: All 6 user stories are complete. Full polished experience across devices.
 

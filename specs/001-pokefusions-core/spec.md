@@ -21,6 +21,10 @@
 - Q: Should AI-generated text be sanitized before rendering? → A: Yes; all AI output must be treated as untrusted and sanitized before DOM insertion to prevent XSS
 - Q: How is the Hugging Face model selected? → A: A single configurable model ID with a sensible default; user can change it in the settings panel alongside the API token
 
+### Session 2026-04-11
+
+- Q: How does the Pokemon selector work for manual selection (search/filter behavior)? → A: Users can search by name (text input) and optionally filter by type. The 809-entry grid should use virtualization or lazy loading for performance. No pagination — all results visible as the user scrolls.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Generate a Random Fusion (Priority: P1)
@@ -140,7 +144,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-004**: System MUST generate a blended fusion name from the two parent Pokemon names using AI
 - **FR-005**: System MUST generate unique descriptive text for each fusion using AI
 - **FR-006**: System MUST calculate fusion stats by averaging each of the six stat types from both parents, rounded to whole numbers
-- **FR-007**: System MUST display fusion results as a card showing: fusion name, parent names with type badges, all six stats with color-coded indicators, AI-written description, and creation timestamp
+- **FR-007**: System MUST display fusion results as a card showing: fusion name, parent names with type badges, all six stats with color-coded indicators (green for values ≥100, yellow for values ≥50, red for values <50), AI-written description, and creation timestamp
 - **FR-008**: System MUST allow users to save generated fusions for later viewing
 - **FR-009**: System MUST persist saved fusions across browser sessions without requiring accounts or server-side storage
 - **FR-010**: System MUST allow users to delete saved fusions
@@ -148,7 +152,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-012**: System MUST display a Pokemon logo placeholder when AI image generation is unavailable
 - **FR-013**: System MUST display AI-generated Pokemon-style images on fusion cards when the local image service is available
 - **FR-014**: System MUST show loading skeleton cards while fusions are being generated
-- **FR-015**: System MUST show toast notifications for success, error, and informational events with auto-dismiss behavior
+- **FR-015**: System MUST show toast notifications for success, error, and informational events with 3-second auto-dismiss behavior
 - **FR-016**: System MUST show an error state with a retry button when the required AI service fails
 - **FR-017**: System MUST support dark mode
 - **FR-018**: System MUST provide a responsive layout that works across mobile and desktop viewports
@@ -169,7 +173,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **Pokemon**: A base species creature defined by a name, one or two types, six stats (HP, Attack, Defense, Special Attack, Special Defense, Speed), and optional flavor text. Sourced from a bundled static JSON dataset of 809 base species (Gens 1–7, ending at Melmetal). No regional variants, megas, or special forms.
 - **Fusion**: A generated combination of two parent Pokemon. Contains a blended AI-generated name, AI-generated description, averaged stats, an optional AI-generated image (not persisted), and a creation timestamp. Each fusion is unique even for the same parent pair due to AI generation. Regeneration replaces the current fusion in-place; saved fusions require an explicit re-save after regeneration.
 - **Fusion Card**: The visual representation of a Fusion displayed to the user. Shows the fusion name, parent Pokemon names with type badges, six color-coded stats with a total, AI description, optional image (or placeholder), and action buttons (Save, Delete, Regenerate).
-- **Type Compatibility Matrix**: The rule that excludes random-mode pairings where both Pokemon share the exact same type combination (e.g., two pure-Water or two Water/Flying Pokemon are excluded). All other pairings are valid. Used only in random mode; manual selection bypasses this filter.
+- **Type Compatibility Check**: A runtime check that excludes random-mode pairings where both Pokemon share the exact same type combination (e.g., two pure-Water or two Water/Flying Pokemon are excluded). All other pairings are valid. Implemented as a comparison function, not a precomputed matrix. Used only in random mode; manual selection bypasses this filter.
 
 ## Success Criteria
 
