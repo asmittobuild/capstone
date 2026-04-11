@@ -1,26 +1,13 @@
 <!--
   Sync Impact Report
-  Version change: 0.0.0 → 1.0.0
-  Bump rationale: MAJOR — initial constitution ratification
+  Version change: 1.0.0 → 1.0.1
+  Bump rationale: PATCH — clarify terminology in Principle IV
 
-  Added principles:
-  - I. Graceful Degradation
-  - II. Local-First Architecture
-  - III. Spec-Driven Workflow
-  - IV. Deterministic Core, AI-Augmented Surface
-  - V. Responsive & Accessible UX
+  Changed:
+  - IV. Deterministic Core: "compatibility matrix" → "type-compatibility check"
+    to align with spec Key Entities and tasks terminology
 
-  Added sections:
-  - Technology & Scope Constraints
-  - Development Workflow
-
-  Removed sections: none (initial ratification)
-
-  Templates requiring updates:
-  ✅ plan-template.md — Constitution Check gate compatible
-  ✅ spec-template.md — user story structure compatible
-  ✅ tasks-template.md — task grouping compatible
-
+  Templates requiring updates: none (clarification only)
   Follow-up TODOs: none
 -->
 
@@ -98,8 +85,8 @@ depending on AI availability.
 
 - Stat calculation: simple average of parent stats,
   integer-rounded
-- Type compatibility: deterministic filter from a defined
-  compatibility matrix
+- Type compatibility: deterministic type-compatibility
+  check function (not a precomputed matrix)
 - Pokemon data: base species only, sourced from a local
   dataset
 - AI outputs: names, descriptions, images — always
@@ -166,4 +153,4 @@ implementation must comply with these principles.
 - **Compliance**: every plan.md must include a Constitution
   Check gate that validates alignment before implementation
 
-**Version**: 1.0.0 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-10
+**Version**: 1.0.1 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-11
