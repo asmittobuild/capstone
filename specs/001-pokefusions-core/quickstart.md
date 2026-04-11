@@ -15,14 +15,24 @@
 git clone <repo-url>
 cd capstone
 
-# Install dependencies
+# Install frontend dependencies
 npm install
 
-# Start dev server
+# Install backend dependencies
+cd backend
+npm install
+cd ..
+
+# Start backend server
+cd backend
+npm run dev &
+cd ..
+
+# Start frontend dev server
 npm run dev
 ```
 
-App runs at `http://localhost:5173` by default.
+Frontend runs at `http://localhost:5173` by default. Backend runs at `http://localhost:3001`.
 
 ## Configuration
 
@@ -49,6 +59,7 @@ App runs at `http://localhost:5173` by default.
 | `npm run test` | Run Vitest unit tests |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run lint` | Run ESLint |
+| `cd backend && npm run dev` | Start backend API server |
 
 ## Project Structure
 
@@ -57,12 +68,20 @@ src/
 ├── components/         # React UI components
 ├── context/            # React Context providers (fusion, settings)
 ├── data/               # Bundled pokedex.json
-├── hooks/              # Custom hooks (useFusion, useLocalStorage, useToast)
+├── hooks/              # Custom hooks (useLocalStorage, useToast)
 ├── lib/                # Pure logic (fusion mechanics, pokemon utils, sanitize)
 ├── pages/              # Route-level page components
-├── services/           # External API clients (HF, PokeAPI, SD)
+├── services/           # API clients (HF, PokeAPI, SD, backend)
 ├── App.tsx             # Root component with routing
 └── main.tsx            # Entry point
+
+backend/
+├── src/
+│   ├── index.ts        # Express entry point with CORS
+│   ├── db.ts           # DB client abstraction (provider-agnostic)
+│   └── routes/
+│       └── fusions.ts  # Fusion CRUD routes
+└── package.json
 
 tests/
 ├── unit/               # Pure logic tests
@@ -73,5 +92,5 @@ tests/
 ## Environment Notes
 
 - **No `.env` file needed**: API token is entered by the user in the Settings UI and stored in localStorage
-- **No backend**: All logic runs client-side
-- **GitHub Pages deployment**: `npm run build` produces static files in `dist/`; Vite `base` is configured for the repo path
+- **Backend required**: A lightweight backend API persists fusions (including images) to a hosted database. DB technology is TBD — abstracted behind `backend/src/db.ts`.
+- **GitHub Pages deployment**: `npm run build` produces static files in `dist/`; Vite `base` is configured for the repo path. Backend is deployed separately.

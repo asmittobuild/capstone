@@ -56,20 +56,21 @@
 - **Response**: `{ images: ["base64_encoded_string"] }` — first element is the generated image
 - **Prompt strategy**: Pokemon art style prompt engineering (e.g., "Pokemon-style creature, digital art, vibrant colors, [fusion description]")
 - **Fallback**: Display Pokemon logo placeholder (FR-012). Detect unavailability via fetch timeout or connection refused.
-- **Gotcha**: Images are NOT persisted in localStorage (FR-026). They're displayed inline as `data:image/png;base64,...` and regenerated on demand.
+- **Gotcha**: Images are persisted to the hosted DB along with all other fusion fields (FR-026). They're displayed inline as `data:image/png;base64,...`.
 
-## localStorage Strategy
+## Persistence Strategy
 
-### Quota Management
-- **Modern API**: `navigator.storage.estimate()` provides `usage` and `quota` for total origin storage
-- **Fallback**: Try-catch on `setItem()` — catches `QuotaExceededError` when storage is full
-- **Typical limit**: ~5–10MB per origin across browsers
-- **Budget**: With text-only fusions (no images per FR-026), each saved fusion is ~1–2KB. Budget supports 2,500+ saved fusions comfortably.
-- **Warning threshold**: Alert user at ~80% capacity (FR-027). Block saves at capacity with informative message.
+### Hosted Database (Fusions)
+- **Technology**: TBD (DynamoDB, MongoDB Atlas, Supabase, etc.) — abstracted behind `backend/src/db.ts`
+- **What is stored**: Complete fusion objects including imageBase64, parent data, stats, AI-generated text
+- **Access**: Via lightweight backend API (see contracts/backend-api.md)
+- **No practical storage limit**: Hosted DB handles capacity; no quota management needed
+- **Error handling**: When backend/DB is unreachable, show error banner with retry button (FR-027). Retain current fusion in memory so user can retry without regenerating.
 
-### Data Schema (localStorage keys)
-- `pokefusions_saved`: JSON array of saved fusion objects
-- `pokefusions_settings`: JSON object with `apiToken`, `modelId`, `theme`
+### localStorage (Settings Only)
+- **Key**: `pokefusions_settings` — JSON object with `apiToken`, `modelId`, `theme`
+- **No fusion data in localStorage**: All fusion persistence goes through the backend API
+- **Typical payload**: <1KB for settings — no quota concerns
 
 ## Pokemon Dataset
 

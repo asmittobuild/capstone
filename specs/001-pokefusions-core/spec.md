@@ -24,6 +24,8 @@
 ### Session 2026-04-11
 
 - Q: How does the Pokemon selector work for manual selection (search/filter behavior)? → A: Users can search by name (text input) and optionally filter by type. The 809-entry grid should use virtualization or lazy loading for performance. No pagination — all results visible as the user scrolls.
+- Q: Should fusion images be persisted when saving? → A: Yes; if an AI-generated image exists, it should be stored alongside the fusion text data so it is available when the user revisits their collection. This requires a hosted database since localStorage cannot handle image storage at scale.
+- Q: Which hosted database should be used? → A: TBD — the specific database technology is a deferred decision. The architecture should use a lightweight backend API layer that abstracts the DB choice.
 
 ## User Scenarios & Testing
 
@@ -126,7 +128,8 @@ The app provides a polished experience across mobile and desktop with dark mode 
 ### Edge Cases
 
 - What happens when the required AI service fails during fusion generation? → Error message with retry button; no partial fusion displayed
-- What happens when the user's browser storage is full? → Informative message explaining saved fusions cannot be added; existing fusions remain accessible
+- What happens when the user's browser storage is full? → N/A — fusion data is stored in a hosted database, not localStorage
+- What happens when the database is unavailable? → Show error with retry button; retain the current fusion in memory so the user can retry saving without regenerating
 - What happens when the AI returns an empty or malformed response? → Retry the request once automatically; if still failing, show error with manual retry option
 - What happens when the user selects the same Pokemon for both parent slots? → Prevent the fusion and display a message asking them to choose two different Pokemon
 - What happens when the optional flavor text service is unavailable? → Skip flavor text enrichment silently; fusion generation continues without it
@@ -146,7 +149,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-006**: System MUST calculate fusion stats by averaging each of the six stat types from both parents, rounded to whole numbers
 - **FR-007**: System MUST display fusion results as a card showing: fusion name, parent names with type badges, all six stats with color-coded indicators (green for values ≥100, yellow for values ≥50, red for values <50), AI-written description, and creation timestamp
 - **FR-008**: System MUST allow users to save generated fusions for later viewing
-- **FR-009**: System MUST persist saved fusions across browser sessions without requiring accounts or server-side storage
+- **FR-009**: System MUST persist saved fusions (including AI-generated images when available) to a hosted database, accessible across browser sessions without requiring user accounts
 - **FR-010**: System MUST allow users to delete saved fusions
 - **FR-011**: System MUST allow users to regenerate a fusion (new AI name and description) for the same parent pair
 - **FR-012**: System MUST display a Pokemon logo placeholder when AI image generation is unavailable
@@ -163,15 +166,15 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-023**: System MUST prevent fusion generation and show a configuration prompt if no API token is set
 - **FR-024**: System MUST detect rate-limit responses from the AI service and display a cooldown message with the Generate button temporarily disabled
 - **FR-025**: System MUST load the Pokemon dataset from a bundled static JSON file containing 809 base species (Gens 1–7)
-- **FR-026**: System MUST NOT persist AI-generated images in localStorage; only text-based fusion data (name, description, stats, parents, timestamp) is stored
-- **FR-027**: System MUST warn the user when localStorage usage approaches capacity and prevent saving if storage is full
+- **FR-026**: System MUST persist AI-generated images alongside fusion text data in the hosted database when images are available; fusions without images store a null image field
+- **FR-027**: System MUST show an error with retry when the database is unavailable, retaining the current fusion in memory
 - **FR-028**: System MUST sanitize all AI-generated text before rendering in the DOM to prevent cross-site scripting (XSS)
 - **FR-029**: System MUST allow the user to configure the Hugging Face model ID in the settings panel, with a sensible default pre-filled
 
 ### Key Entities
 
 - **Pokemon**: A base species creature defined by a name, one or two types, six stats (HP, Attack, Defense, Special Attack, Special Defense, Speed), and optional flavor text. Sourced from a bundled static JSON dataset of 809 base species (Gens 1–7, ending at Melmetal). No regional variants, megas, or special forms.
-- **Fusion**: A generated combination of two parent Pokemon. Contains a blended AI-generated name, AI-generated description, averaged stats, an optional AI-generated image (not persisted), and a creation timestamp. Each fusion is unique even for the same parent pair due to AI generation. Regeneration replaces the current fusion in-place; saved fusions require an explicit re-save after regeneration.
+- **Fusion**: A generated combination of two parent Pokemon. Contains a blended AI-generated name, AI-generated description, averaged stats, an optional AI-generated image (persisted to hosted DB when available), and a creation timestamp. Each fusion is unique even for the same parent pair due to AI generation. Regeneration replaces the current fusion in-place; saved fusions require an explicit re-save after regeneration.
 - **Fusion Card**: The visual representation of a Fusion displayed to the user. Shows the fusion name, parent Pokemon names with type badges, six color-coded stats with a total, AI description, optional image (or placeholder), and action buttons (Save, Delete, Regenerate).
 - **Type Compatibility Check**: A runtime check that excludes random-mode pairings where both Pokemon share the exact same type combination (e.g., two pure-Water or two Water/Flying Pokemon are excluded). All other pairings are valid. Implemented as a comparison function, not a precomputed matrix. Used only in random mode; manual selection bypasses this filter.
 
@@ -180,8 +183,8 @@ The app provides a polished experience across mobile and desktop with dark mode 
 ### Measurable Outcomes
 
 - **SC-001**: Users can generate a random fusion with a single action and see the result within 15 seconds
-- **SC-002**: The app remains fully functional when only the required AI text service is available — all other services may be offline
-- **SC-003**: Saved fusions persist across browser sessions with 100% reliability (no data loss on normal browser close/reopen)
+- **SC-002**: The app remains fully functional when the required AI text service and hosted database are available — all other services may be offline
+- **SC-003**: Saved fusions (including images) persist in the hosted database with 100% reliability across sessions and devices
 - **SC-004**: All user-facing operations provide visual feedback (loading, success, or error) within 1 second of user action
 - **SC-005**: The app is fully usable on screens as small as 320px wide and as large as 2560px wide
 - **SC-006**: 100% of error scenarios display a user-friendly message with a recovery action (retry, dismiss, or navigate)
@@ -190,14 +193,15 @@ The app provides a polished experience across mobile and desktop with dark mode 
 
 ## Assumptions
 
-- Users have a stable internet connection to access the required AI text generation service
+- Users have a stable internet connection to access the required AI text generation service and hosted database
 - Users are using a modern browser that supports local storage (latest two major versions of Chrome, Firefox, Safari, or Edge)
 - The Pokemon dataset covers base species only: no regional variants, mega evolutions, Gigantamax forms, or other special forms
-- The app is designed for single-user local use — no multi-user, multi-device sync, or collaborative features
+- The app is designed for single-user use with no authentication for v1 — all users share the same DB endpoint
 - The local image generation service, when used, runs on the same machine or local network as the user
 - The type-compatibility filter for random mode excludes pairs where both Pokemon share the exact same type combination; all other pairings are valid
 - AI-generated content (names, descriptions, images) is non-deterministic — the same inputs may produce different outputs
-- No offline mode is required — the app needs at least the required AI service to generate fusions
+- No offline mode is required — the app needs the AI service and database to function fully
 - The Hugging Face API token is provided by the user via a settings panel and stored in localStorage — it is never hardcoded in source
-- AI-generated images are ephemeral and not persisted in localStorage to conserve storage space; only text-based fusion data is saved
+- AI-generated images are persisted to the hosted database alongside fusion text data when available
 - The Pokemon dataset is a bundled static JSON file (809 base species, Gens 1–7); no runtime fetching of the full roster is required
+- The specific hosted database technology is a deferred decision; the backend API abstracts the DB choice

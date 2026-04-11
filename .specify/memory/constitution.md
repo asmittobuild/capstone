@@ -1,14 +1,28 @@
 <!--
   Sync Impact Report
-  Version change: 1.0.0 → 1.0.1
-  Bump rationale: PATCH — clarify terminology in Principle IV
+  Version change: 1.0.1 → 2.0.0
+  Bump rationale: MAJOR — Principle II rewritten from Local-First
+  to Cloud-Persisted Architecture to support hosted DB with image storage
 
-  Changed:
-  - IV. Deterministic Core: "compatibility matrix" → "type-compatibility check"
-    to align with spec Key Entities and tasks terminology
+  Changed principles:
+  - II. Local-First Architecture → II. Cloud-Persisted Architecture
+    (hosted DB for fusion data + images; localStorage for settings only)
 
-  Templates requiring updates: none (clarification only)
-  Follow-up TODOs: none
+  Updated sections:
+  - I. Graceful Degradation: added DB unavailability fallback
+  - Technology & Scope Constraints: persistence updated
+
+  Impact on dependent artifacts:
+  ⚠️ spec.md — FR-009, FR-022, FR-026, FR-027, assumptions need update
+  ⚠️ plan.md — Technical Context, project structure, Constitution Check
+  ⚠️ data-model.md — localStorage schema → DB schema
+  ⚠️ tasks.md — add backend/DB tasks, modify persistence tasks
+  ⚠️ contracts/ — add backend API contract
+
+  Follow-up TODOs:
+  - Choose specific hosted DB (deferred — plan uses TBD)
+  - Add backend API contract
+  - Update tasks for backend setup
 -->
 
 # PokeFusions Constitution
@@ -18,14 +32,16 @@
 ### I. Graceful Degradation
 
 The app MUST function fully with only the required
-dependency (Hugging Face text generation) available.
-Optional services — PokeAPI flavor text and Stable
-Diffusion image generation — MUST fail silently with
-well-defined fallback behavior:
+dependency (Hugging Face text generation) and the
+hosted database available. Optional services — PokeAPI
+flavor text and Stable Diffusion image generation —
+MUST fail silently with well-defined fallback behavior:
 
 - PokeAPI unavailable: skip flavor text enrichment
 - Stable Diffusion unreachable: display the Pokemon logo
   as the fusion image placeholder
+- Database unavailable: show error with retry; do not
+  lose the current in-memory fusion
 - No optional service failure may block fusion generation
   or break the user experience
 
@@ -34,24 +50,31 @@ local services with varying availability. Users must
 never see a broken state because an optional service
 is offline.
 
-### II. Local-First Architecture
+### II. Cloud-Persisted Architecture
 
-All persistence MUST use browser localStorage. The app
-MUST NOT require a hosted database, user accounts, or
-cloud sync for v1. Image generation is a local-only
-optional feature available only when the user's local
-Stable Diffusion service is reachable.
+Saved fusions (including AI-generated images when
+available) MUST be persisted to a hosted database.
+The specific database technology is a deferred decision
+(TBD — e.g., DynamoDB, MongoDB Atlas, Supabase, etc.).
+User settings (API token, model ID, theme) remain in
+browser localStorage for fast local access.
 
-- Saved fusions persist in localStorage across browser
+- Saved fusions persist in hosted DB across devices and
   sessions
-- No server-side persistence or authentication
-- Deployed environments MUST degrade cleanly when the
-  local image service is unreachable
+- AI-generated images are stored alongside fusion text
+  data when present
+- No user accounts or authentication for v1 (single-user
+  with a shared DB endpoint)
+- A lightweight backend API layer mediates between the
+  frontend SPA and the hosted DB
+- The frontend MUST degrade gracefully if the DB is
+  temporarily unreachable (show error, retain in-memory
+  state)
 
-**Rationale**: This is a capstone prototype scoped for
-single-user local use. Keeping persistence and image
-generation local avoids infrastructure complexity and
-keeps the project focused on the AI fusion pipeline.
+**Rationale**: Persisting fusion images alongside text
+data provides a consistent user experience. A hosted DB
+removes localStorage capacity constraints and enables
+future multi-device or multi-user features.
 
 ### III. Spec-Driven Workflow
 
@@ -123,7 +146,10 @@ shows maturity beyond the happy path.
 - **Optional APIs**: PokeAPI (flavor text, cached
   in-memory), Stable Diffusion WebUI (localhost:7860,
   base64 image response)
-- **Persistence**: browser localStorage only
+- **Persistence**: hosted database (TBD) for fusion data
+  and images; browser localStorage for user settings only
+- **Backend**: lightweight API layer (TBD — e.g., Express,
+  serverless functions) between frontend and DB
 - **Development tool**: GitHub Copilot with Spec Kit
 - **MCP**: GitHub MCP server for issue management
 
@@ -153,4 +179,4 @@ implementation must comply with these principles.
 - **Compliance**: every plan.md must include a Constitution
   Check gate that validates alignment before implementation
 
-**Version**: 1.0.1 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-11
+**Version**: 2.0.0 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-11

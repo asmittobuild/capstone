@@ -11,12 +11,12 @@ AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pok
 
 **Language/Version**: TypeScript 5.x (strict mode)
 **Primary Dependencies**: React 18, Vite 5, Tailwind CSS 3, DOMPurify (XSS sanitization)
-**Storage**: Browser localStorage (saved fusions, API token, settings)
+**Storage**: Hosted database (TBD — e.g., DynamoDB, MongoDB Atlas, Supabase) for fusion data + images; browser localStorage for user settings (API token, model ID, theme)
 **Testing**: Vitest + React Testing Library
-**Target Platform**: Modern browsers (latest 2 versions of Chrome, Firefox, Safari, Edge); deployed to GitHub Pages
-**Project Type**: Single-page web application (SPA)
+**Target Platform**: Modern browsers (latest 2 versions of Chrome, Firefox, Safari, Edge); frontend deployed to GitHub Pages; backend TBD (serverless or lightweight server)
+**Project Type**: Single-page web application (SPA) with lightweight backend API
 **Performance Goals**: Fusion generation ≤15s end-to-end (per SC-001); UI feedback within 1s of user action (per SC-004); 60fps animations
-**Constraints**: No server-side backend; localStorage capacity (~5–10MB); no offline mode; single-user local use
+**Constraints**: localStorage for settings only; hosted DB required for fusion persistence; no offline mode; single-user (no auth for v1)
 **Scale/Scope**: 809 Pokemon (bundled JSON), single user, ~6 main views/states (home, selection, fusion card, collection, settings, empty states)
 
 ## Constitution Check
@@ -26,7 +26,7 @@ AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pok
 | # | Principle | Status | Evidence |
 |---|-----------|--------|----------|
 | I | Graceful Degradation | PASS | Design separates required (HF text) from optional (PokeAPI, Stable Diffusion) services. FR-020 mandates silent failure for optional services. FR-012 defines image placeholder fallback. FR-016 requires error+retry for required service failures. |
-| II | Local-First Architecture | PASS | All persistence via localStorage (FR-009, FR-022). No server-side DB, accounts, or cloud sync. Image generation is local-only optional. Deployed via GitHub Pages (static hosting). |
+| II | Cloud-Persisted Architecture | PASS | Saved fusions (with images) persisted to hosted DB (FR-009, FR-026). User settings remain in localStorage (FR-022). No user accounts for v1. Backend API mediates DB access. |
 | III | Spec-Driven Workflow | PASS | This plan is generated from spec.md via `/speckit.plan`. Implementation will follow the full Spec Kit pipeline through tasks and issues. |
 | IV | Deterministic Core, AI-Augmented Surface | PASS | Stat averaging (FR-006), type compatibility filtering (FR-002), and Pokemon data lookup are deterministic. AI generates only names (FR-004), descriptions (FR-005), and optional images (FR-013) — all on the surface layer. |
 | V | Responsive & Accessible UX | PASS | FR-014 (skeletons), FR-015 (toasts), FR-016 (error+retry), FR-017 (dark mode), FR-018 (responsive), FR-019 (animations) all specified. SC-005 defines viewport range 320px–2560px. |
@@ -66,7 +66,8 @@ src/
 ├── services/             # External API integrations
 │   ├── huggingface.ts    # HF chat completions client (required)
 │   ├── pokeapi.ts        # PokeAPI flavor text client (optional)
-│   └── stablediffusion.ts # Local SD WebUI client (optional)
+│   ├── stablediffusion.ts # Local SD WebUI client (optional)
+│   └── api.ts            # Backend API client (save/load/delete fusions)
 ├── context/              # React Context providers
 │   ├── FusionContext.tsx  # Fusion state management
 │   └── SettingsContext.tsx # API token, model ID, theme
@@ -78,13 +79,20 @@ src/
 ├── main.tsx              # Entry point
 └── index.css             # Tailwind directives + global styles
 
+backend/                      # Lightweight backend API
+├── src/
+│   ├── index.ts          # Server entry point
+│   ├── routes/           # API route handlers (fusions CRUD)
+│   └── db.ts             # Database client abstraction (TBD provider)
+└── package.json          # Backend dependencies
+
 tests/
 ├── unit/                 # Pure logic tests (fusion, pokemon, sanitize)
 ├── integration/          # Component + service integration tests
 └── setup.ts              # Vitest setup (MSW, mocks)
 ```
 
-**Structure Decision**: Single SPA project. All code under `src/` with clear separation between deterministic logic (`lib/`), React components (`components/`), external integrations (`services/`), and state management (`context/`). Tests mirror the `lib/` and `components/` structure.
+**Structure Decision**: SPA frontend + lightweight backend API. Frontend under `src/` with clear separation between deterministic logic (`lib/`), React components (`components/`), external integrations (`services/`), and state management (`context/`). Backend under `backend/` provides CRUD API for fusion persistence to the hosted DB. Tests mirror the `lib/` and `components/` structure.
 
 ## Complexity Tracking
 

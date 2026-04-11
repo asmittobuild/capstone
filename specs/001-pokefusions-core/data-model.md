@@ -42,7 +42,7 @@ Generated at runtime, optionally persisted to localStorage.
 | name | string | AI-generated blended fusion name |
 | description | string | AI-generated descriptive text |
 | stats | PokemonStats | Averaged stats from both parents (rounded to integers) |
-| imageBase64 | string \| null | AI-generated image (ephemeral, NOT persisted) |
+| imageBase64 | string \| null | AI-generated image (persisted to hosted DB when available) |
 | flavorText | string \| null | Optional PokeAPI flavor text enrichment |
 | createdAt | string | ISO 8601 timestamp |
 | mode | "random" \| "manual" | How the pair was selected |
@@ -61,8 +61,8 @@ Generated at runtime, optionally persisted to localStorage.
 - `stats` values are `Math.round((parent1.stat + parent2.stat) / 2)` for each of the six stats
 
 **State Transitions**:
-- **Generated** → Initial state after AI returns results
-- **Saved** → User explicitly saves to localStorage (persists text data only, `imageBase64` set to null)
+- **Generated** → Initial state after AI returns results (in-memory only)
+- **Saved** → User explicitly saves to hosted DB (all fields including imageBase64 when present)
 - **Regenerated** → User triggers regeneration; `name`, `description`, `imageBase64` are replaced; `id` stays the same; if previously saved, requires explicit re-save
 
 ---
@@ -91,17 +91,24 @@ Pokemon (809 entries, read-only)
 Fusion (0..N, user-generated)
   ├── parent1 → Pokemon (by id)
   ├── parent2 → Pokemon (by id)
-  └── persisted in localStorage (text fields only)
+  └── persisted in hosted DB (all fields including image)
 
 Settings (singleton)
-  └── persisted in localStorage
+  └── persisted in localStorage (browser-local)
 ```
 
-## localStorage Schema
+## Storage Schema
+
+### Hosted Database (fusion data)
+
+| Collection/Table | Document/Row Shape | Description |
+|------------------|--------------------|-------------|
+| `fusions` | Fusion object (all fields) | Saved fusions with images as base64 strings or binary blobs (DB-dependent) |
+
+### localStorage (user settings only)
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `pokefusions_saved` | Fusion[] (JSON) | Array of saved fusions (without imageBase64) |
-| `pokefusions_settings` | Settings (JSON) | User settings object |
+| `pokefusions_settings` | Settings (JSON) | API token, model ID, theme preference |
 
-**Storage budget**: ~1–2KB per saved fusion (text only). At 5MB localStorage limit, supports ~2,500+ fusions.
+**Storage budget**: No practical limit for fusion count — hosted DB handles capacity. Images stored as base64 strings (~500KB–1MB each) or binary blobs depending on DB choice.
