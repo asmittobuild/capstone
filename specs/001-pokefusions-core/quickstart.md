@@ -6,6 +6,7 @@
 - npm 9+ or pnpm
 - Git
 - Hugging Face account with API token (free tier works)
+- Supabase account with a project (free tier works) — get project URL and anon key from Settings > API
 - (Optional) Stable Diffusion WebUI running locally on port 7860
 
 ## Setup
@@ -14,6 +15,13 @@
 # Clone and enter repo
 git clone <repo-url>
 cd capstone
+
+# Copy env template and fill in Supabase credentials
+cp .env.example .env
+# Edit .env with your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+
+# Create the fusions table in Supabase SQL Editor
+# Run the DDL from specs/001-pokefusions-core/contracts/supabase.md
 
 # Install dependencies
 npm install
@@ -72,6 +80,7 @@ tests/
 
 ## Environment Notes
 
-- **No `.env` file needed**: API token is entered by the user in the Settings UI and stored in localStorage
-- **No backend server**: The app connects directly to the hosted database via its client SDK. DB technology is TBD (e.g., Supabase, Firebase).
-- **GitHub Pages deployment**: `npm run build` produces static files in `dist/`; Vite `base` is configured for the repo path
+- **`.env` file required for Supabase**: Copy `.env.example` to `.env` and fill in your Supabase project URL and anon key. These are loaded at build time via Vite's `import.meta.env`.
+- **HF API token**: Entered by the user in the Settings UI and stored in localStorage (not in `.env`)
+- **No backend server**: The app connects directly to Supabase via `@supabase/supabase-js` client SDK.
+- **GitHub Pages deployment**: `npm run build` produces static files in `dist/`; Vite `base` is configured for the repo path. Supabase env vars must be set in the deployment environment.

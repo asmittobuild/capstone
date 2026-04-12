@@ -22,7 +22,7 @@
   ⚠️ contracts/ — remove backend API contract
 
   Follow-up TODOs:
-  - Choose specific hosted DB (deferred — plan uses TBD)
+  - ✅ Hosted DB chosen: Supabase (Postgres) — locked in across all artifacts
 -->
 
 # PokeFusions Constitution
@@ -53,9 +53,7 @@ is offline.
 ### II. Cloud-Persisted Architecture
 
 Saved fusions (including AI-generated images when
-available) MUST be persisted to a hosted database.
-The specific database technology is a deferred decision
-(TBD — e.g., DynamoDB, MongoDB Atlas, Supabase, etc.).
+available) MUST be persisted to Supabase (Postgres).
 User settings (API token, model ID, theme) remain in
 browser localStorage for fast local access.
 
@@ -146,7 +144,7 @@ shows maturity beyond the happy path.
 - **Optional APIs**: PokeAPI (flavor text, cached
   in-memory), Stable Diffusion WebUI (localhost:7860,
   base64 image response)
-- **Persistence**: hosted database (TBD) for fusion data
+- **Persistence**: Supabase (Postgres) for fusion data
   and images; browser localStorage for user settings only
 - **Development tool**: GitHub Copilot with Spec Kit
 - **MCP**: GitHub MCP server for issue management

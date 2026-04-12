@@ -22,9 +22,11 @@ Source: Bundled `pokedex.json` (read-only, 809 entries)
 | hp | number | Hit Points |
 | attack | number | Physical Attack |
 | defense | number | Physical Defense |
-| sp_attack | number | Special Attack |
-| sp_defense | number | Special Defense |
+| spAttack | number | Special Attack |
+| spDefense | number | Special Defense |
 | speed | number | Speed |
+
+> **Convention**: TypeScript uses camelCase (`spAttack`). Supabase JSONB stores snake_case (`sp_attack`). The `db.ts` mapper handles the conversion (see contracts/supabase.md).
 
 **Validation**: All stat values are positive integers. Types array has 1 or 2 elements.
 
@@ -99,11 +101,20 @@ Settings (singleton)
 
 ## Storage Schema
 
-### Hosted Database (fusion data)
+### Supabase Postgres (fusion data)
 
-| Collection/Table | Document/Row Shape | Description |
-|------------------|--------------------|-------------|
-| `fusions` | Fusion object (all fields) | Saved fusions with images as base64 strings or binary blobs (DB-dependent) |
+| Table | Column | Type | Description |
+|-------|--------|------|-------------|
+| `fusions` | `id` | `uuid` (PK) | Fusion UUID |
+| `fusions` | `parent1` | `jsonb` | FusionParent object |
+| `fusions` | `parent2` | `jsonb` | FusionParent object |
+| `fusions` | `name` | `text` | AI-generated fusion name |
+| `fusions` | `description` | `text` | AI-generated description |
+| `fusions` | `stats` | `jsonb` | PokemonStats object |
+| `fusions` | `image_base64` | `text` | AI-generated image or null |
+| `fusions` | `flavor_text` | `text` | PokeAPI flavor text or null |
+| `fusions` | `created_at` | `timestamptz` | ISO 8601 creation timestamp |
+| `fusions` | `mode` | `text` | "random" or "manual" |
 
 ### localStorage (user settings only)
 
@@ -111,4 +122,4 @@ Settings (singleton)
 |-----|------|-------------|
 | `pokefusions_settings` | Settings (JSON) | API token, model ID, theme preference |
 
-**Storage budget**: No practical limit for fusion count — hosted DB handles capacity. Images stored as base64 strings (~500KB–1MB each) or binary blobs depending on DB choice.
+**Storage budget**: Supabase free tier provides 500MB DB storage. Each fusion with image is ~500KB–1MB (base64 text). Supports ~500–1000 fusions comfortably on the free tier.

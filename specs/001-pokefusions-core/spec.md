@@ -13,7 +13,7 @@
 - Q: When a user regenerates a fusion, does it replace the current card or create a new one? → A: Regeneration replaces the current card in-place (same parents, new AI content); if already saved, user must re-save to persist the new version
 - Q: What is the source and scope of the Pokemon dataset? → A: Bundled static JSON file shipped with the app containing 809 base species (Gens 1–7)
 - Q: How should the app handle API rate limiting from the AI service? → A: Show a rate-limit-specific message with cooldown hint and temporarily disable the Generate button
-- Q: Should AI-generated images be persisted in localStorage with saved fusions? → A: No; only text data (name, description, stats, metadata) is stored; images are regenerated on demand or shown as placeholders
+- Q: Should AI-generated images be persisted in localStorage with saved fusions? → A: ~~No; only text data (name, description, stats, metadata) is stored; images are regenerated on demand or shown as placeholders~~ [Superseded — see 2026-04-11 clarification: images ARE persisted to hosted DB]
 
 ### Session 2026-04-10 (2)
 
@@ -25,7 +25,7 @@
 
 - Q: How does the Pokemon selector work for manual selection (search/filter behavior)? → A: Users can search by name (text input) and optionally filter by type. The 809-entry grid should use virtualization or lazy loading for performance. No pagination — all results visible as the user scrolls.
 - Q: Should fusion images be persisted when saving? → A: Yes; if an AI-generated image exists, it should be stored alongside the fusion text data so it is available when the user revisits their collection. This requires a hosted database since localStorage cannot handle image storage at scale.
-- Q: Which hosted database should be used? → A: TBD — the specific database technology is a deferred decision. The app connects directly to the hosted DB via its client SDK (no custom backend server).
+- Q: Which hosted database should be used? → A: Supabase (Postgres). The app connects directly via `@supabase/supabase-js` client SDK. Supabase project URL and anon key are provided via Vite environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) at build time.
 
 ## User Scenarios & Testing
 
@@ -166,10 +166,12 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-023**: System MUST prevent fusion generation and show a configuration prompt if no API token is set
 - **FR-024**: System MUST detect rate-limit responses from the AI service and display a cooldown message with the Generate button temporarily disabled
 - **FR-025**: System MUST load the Pokemon dataset from a bundled static JSON file containing 809 base species (Gens 1–7)
-- **FR-026**: System MUST persist AI-generated images alongside fusion text data in the hosted database when images are available; fusions without images store a null image field
+- **FR-026**: System MUST persist AI-generated images alongside fusion text data in the hosted database when images are available; fusions without images store a null image field (extends FR-009 with null-handling detail)
 - **FR-027**: System MUST show an error with retry when the database is unavailable, retaining the current fusion in memory
 - **FR-028**: System MUST sanitize all AI-generated text before rendering in the DOM to prevent cross-site scripting (XSS)
 - **FR-029**: System MUST allow the user to configure the Hugging Face model ID in the settings panel, with a sensible default pre-filled
+- **FR-030**: System MUST provide a searchable, filterable Pokemon selector with name search and optional type filter, using virtualization or lazy loading for the full 809-entry roster
+- **FR-031**: System MUST provide a dedicated settings route (/settings) for API token, model ID, and theme configuration
 
 ### Key Entities
 
@@ -204,4 +206,4 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - The Hugging Face API token is provided by the user via a settings panel and stored in localStorage — it is never hardcoded in source
 - AI-generated images are persisted to the hosted database alongside fusion text data when available
 - The Pokemon dataset is a bundled static JSON file (809 base species, Gens 1–7); no runtime fetching of the full roster is required
-- The specific hosted database technology is a deferred decision; the app connects directly via client SDK
+- Database is Supabase (Postgres); credentials provided via Vite env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)

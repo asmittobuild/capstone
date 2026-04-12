@@ -60,12 +60,17 @@
 
 ## Persistence Strategy
 
-### Hosted Database (Fusions)
-- **Technology**: TBD (Supabase, Firebase, MongoDB Atlas, etc.) — accessed via client SDK directly from the SPA
-- **What is stored**: Complete fusion objects including imageBase64, parent data, stats, AI-generated text
-- **Access**: Frontend connects directly to hosted DB via its client SDK (no custom backend server)
-- **No practical storage limit**: Hosted DB handles capacity; no quota management needed
-- **Error handling**: When DB is unreachable, show error banner with retry button (FR-027). Retain current fusion in memory so user can retry without regenerating.
+### Supabase (Fusions)
+- **Technology**: Supabase (hosted Postgres) via `@supabase/supabase-js` client SDK
+- **Dashboard**: Create project at https://supabase.com → get project URL + anon key
+- **SDK**: `@supabase/supabase-js` — install as npm dependency
+- **Connection**: `createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)` — credentials in `.env` file, loaded via Vite's `import.meta.env`
+- **Table**: `fusions` — single table with columns matching the Fusion entity (id, parent1, parent2, name, description, stats, image_base64, flavor_text, created_at, mode)
+- **What is stored**: Complete fusion objects including imageBase64 as text column, parent data as JSONB, stats as JSONB
+- **Row Level Security**: Disabled for v1 (single-user, no auth). Anon key provides full read/write.
+- **No practical storage limit**: Supabase free tier = 500MB DB + 1GB storage
+- **Error handling**: When Supabase is unreachable, show error banner with retry button (FR-027). Retain current fusion in memory so user can retry without regenerating.
+- **Gotcha**: The `.env` file with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` must NOT be committed to git (add to `.gitignore`). A `.env.example` with placeholder values should be committed.
 
 ### localStorage (Settings Only)
 - **Key**: `pokefusions_settings` — JSON object with `apiToken`, `modelId`, `theme`
