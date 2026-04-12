@@ -34,11 +34,11 @@
 The app MUST function fully with only the required
 dependency (Hugging Face text generation) and the
 hosted database available. Optional services — PokeAPI
-flavor text and Stable Diffusion image generation —
+flavor text and SDXL image generation —
 MUST fail silently with well-defined fallback behavior:
 
 - PokeAPI unavailable: skip flavor text enrichment
-- Stable Diffusion unreachable: display the Pokemon logo
+- SDXL API unreachable: display the Pokemon logo
   as the fusion image placeholder
 - Database unavailable: show error with retry; do not
   lose the current in-memory fusion

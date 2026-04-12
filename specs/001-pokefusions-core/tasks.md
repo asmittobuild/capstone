@@ -115,7 +115,7 @@
 
 ## Phase 6: User Story 4 — View AI-Generated Fusion Image (Priority: P4)
 
-**Goal**: When the local Stable Diffusion service is available, fusion cards show an AI-generated Pokemon-style image. When unavailable, a Pokemon logo placeholder is shown.
+**Goal**: When the SDXL image generation service is available, fusion cards show an AI-generated Pokemon-style image. When unavailable, a Pokemon logo placeholder is shown.
 
 **Independent Test**: Generate a fusion with SD running → image appears on card. Stop SD → generate again → placeholder appears with no error.
 

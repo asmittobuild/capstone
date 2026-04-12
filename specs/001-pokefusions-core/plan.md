@@ -1,17 +1,17 @@
 # Implementation Plan: PokeFusions Core
 
-**Branch**: `001-pokefusions-core` | **Date**: 2026-04-11 | **Spec**: [spec.md](spec.md)
+**Branch**: `001-pokefusions-core` | **Date**: 2026-04-12 | **Spec**: [spec.md](spec.md)
 **Input**: Feature specification from `/specs/001-pokefusions-core/spec.md`
 
 ## Summary
 
-AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pokemon (random or manual selection) into a unique creation with AI-generated names/descriptions, averaged stats, and optional AI images. Built with React + TypeScript + Vite + Tailwind CSS, persisting fusions to Supabase, deployed to GitHub Pages. Hugging Face inference API provides the AI text generation; PokeAPI and local Stable Diffusion are optional integrations.
+AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pokemon (random or manual selection) into a unique creation with AI-generated names/descriptions, averaged stats, and optional AI images. Built with React + TypeScript + Vite + Tailwind CSS, persisting fusions to Supabase, deployed to GitHub Pages. Hugging Face inference API provides the AI text generation; PokeAPI and a custom SDXL image generation API are optional integrations.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (strict mode)
 **Primary Dependencies**: React 18, Vite 5, Tailwind CSS 3, DOMPurify (XSS sanitization)
-**Storage**: Supabase (Postgres) for fusion data + images via `@supabase/supabase-js` client SDK; browser localStorage for user settings (API token, model ID, theme). Supabase URL and anon key provided via Vite env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)
+**Storage**: Supabase (Postgres) for fusion data + images via `@supabase/supabase-js` client SDK; browser localStorage for user settings (API token, model ID, theme). Supabase URL and anon key provided via Vite env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). Image generation API URL configurable via `VITE_SD_API_URL` (default `http://192.168.4.100:8000`).
 **Testing**: Vitest + React Testing Library
 **Target Platform**: Modern browsers (latest 2 versions of Chrome, Firefox, Safari, Edge); deployed to GitHub Pages
 **Project Type**: Single-page web application (SPA)
@@ -25,7 +25,7 @@ AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pok
 
 | # | Principle | Status | Evidence |
 |---|-----------|--------|----------|
-| I | Graceful Degradation | PASS | Design separates required (HF text) from optional (PokeAPI, Stable Diffusion) services. FR-020 mandates silent failure for optional services. FR-012 defines image placeholder fallback. FR-016 requires error+retry for required service failures. |
+| I | Graceful Degradation | PASS | Design separates required (HF text) from optional (PokeAPI, SDXL image API) services. FR-020 mandates silent failure for optional services. FR-012 defines image placeholder fallback. FR-016 requires error+retry for required service failures. |
 | II | Cloud-Persisted Architecture | PASS | Saved fusions (with images) persisted to Supabase via `@supabase/supabase-js` client SDK (FR-009, FR-026). Credentials via env vars. User settings remain in localStorage (FR-022). No user accounts for v1. No backend server — SPA connects directly to Supabase. |
 | III | Spec-Driven Workflow | PASS | This plan is generated from spec.md via `/speckit.plan`. Implementation will follow the full Spec Kit pipeline through tasks and issues. |
 | IV | Deterministic Core, AI-Augmented Surface | PASS | Stat averaging (FR-006), type compatibility filtering (FR-002), and Pokemon data lookup are deterministic. AI generates only names (FR-004), descriptions (FR-005), and optional images (FR-013) — all on the surface layer. |
