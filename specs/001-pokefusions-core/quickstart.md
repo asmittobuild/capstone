@@ -54,8 +54,9 @@ App runs at `http://localhost:5173` by default.
 | `npm run dev` | Start Vite dev server with HMR |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Preview production build locally |
-| `npm run test` | Run Vitest unit tests |
+| `npm run test` | Run Vitest unit + integration tests |
 | `npm run test:watch` | Run tests in watch mode |
+| `npm run test:coverage` | Run tests with coverage report (≥80% on src/lib/ and src/services/) |
 | `npm run lint` | Run ESLint |
 
 ## Project Structure

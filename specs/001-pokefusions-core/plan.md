@@ -1,92 +1,116 @@
-# Implementation Plan: PokeFusions Core
+﻿# Implementation Plan: PokeFusions Core
 
 **Branch**: `001-pokefusions-core` | **Date**: 2026-04-12 | **Spec**: [spec.md](spec.md)
 **Input**: Feature specification from `/specs/001-pokefusions-core/spec.md`
 
 ## Summary
 
-AI-powered Pokemon fusion generator — a React SPA that lets users fuse two Pokemon (random or manual selection) into a unique creation with AI-generated names/descriptions, averaged stats, and optional AI images. Built with React + TypeScript + Vite + Tailwind CSS, persisting fusions to Supabase, deployed to GitHub Pages. Hugging Face inference API provides the AI text generation; PokeAPI and a custom SDXL image generation API are optional integrations.
+AI-powered Pokemon fusion generator — a React SPA that combines two Pokemon using deterministic stat averaging and AI-generated names, descriptions, and optional images. Built with TypeScript 5.x (strict), React 18, Vite 5, and Tailwind CSS 3. Persists fusions (including images) to Supabase (Postgres); user settings in localStorage. Uses Hugging Face chat completions for text generation and a custom SDXL API for optional image generation. Automated test suite (Vitest + React Testing Library) covers pure logic and service clients with ≥80% line coverage on critical modules.
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.x (strict mode)
-**Primary Dependencies**: React 18, Vite 5, Tailwind CSS 3, DOMPurify (XSS sanitization)
-**Storage**: Supabase (Postgres) for fusion data + images via `@supabase/supabase-js` client SDK; browser localStorage for user settings (API token, model ID, theme). Supabase URL and anon key provided via Vite env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). Image generation API URL configurable via `VITE_SD_API_URL` (default `http://192.168.4.100:8000`).
-**Testing**: Vitest + React Testing Library
-**Target Platform**: Modern browsers (latest 2 versions of Chrome, Firefox, Safari, Edge); deployed to GitHub Pages
-**Project Type**: Single-page web application (SPA)
-**Performance Goals**: Fusion generation ≤15s end-to-end (per SC-001); UI feedback within 1s of user action (per SC-004); 60fps animations
-**Constraints**: localStorage for settings only; hosted DB required for fusion persistence; no offline mode; single-user (no auth for v1)
-**Scale/Scope**: 809 Pokemon (bundled JSON), single user, ~6 main views/states (home, selection, fusion card, collection, settings, empty states)
+**Language/Version**: TypeScript 5.x (strict mode) + React 18
+**Primary Dependencies**: Vite 5, Tailwind CSS 3, DOMPurify, react-router-dom, @supabase/supabase-js, uuid
+**Storage**: Supabase (Postgres) for fusion data + images via `@supabase/supabase-js`; browser localStorage for user settings (API token, model ID, theme)
+**Testing**: Vitest + React Testing Library; unit tests for src/lib/ (pure functions), integration tests for src/services/ (mocked APIs) and fusion orchestrator; ≥80% line coverage on src/lib/ and src/services/ (FR-032, FR-033, SC-009)
+**Target Platform**: Browser SPA deployed to GitHub Pages (HashRouter)
+**Project Type**: Single-page web application (no backend server)
+**Performance Goals**: <15s fusion generation (SC-001), <1s visual feedback (SC-004)
+**Constraints**: No custom backend — SPA connects directly to Supabase and external APIs. No auth for v1. Offline not required.
+**Scale/Scope**: 809 Pokemon (Gens 1-7), single-user, 4 routes (home, select, collection, settings)
+
+**Environment Variables** (in `.env`, not committed):
+- `VITE_SUPABASE_URL` — Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` — Supabase anon/public key
+- `VITE_SD_API_URL` — Custom SDXL API URL (default: `http://192.168.4.100:8000`)
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
 
-| # | Principle | Status | Evidence |
-|---|-----------|--------|----------|
-| I | Graceful Degradation | PASS | Design separates required (HF text) from optional (PokeAPI, SDXL image API) services. FR-020 mandates silent failure for optional services. FR-012 defines image placeholder fallback. FR-016 requires error+retry for required service failures. |
-| II | Cloud-Persisted Architecture | PASS | Saved fusions (with images) persisted to Supabase via `@supabase/supabase-js` client SDK (FR-009, FR-026). Credentials via env vars. User settings remain in localStorage (FR-022). No user accounts for v1. No backend server — SPA connects directly to Supabase. |
-| III | Spec-Driven Workflow | PASS | This plan is generated from spec.md via `/speckit.plan`. Implementation will follow the full Spec Kit pipeline through tasks and issues. |
-| IV | Deterministic Core, AI-Augmented Surface | PASS | Stat averaging (FR-006), type compatibility filtering (FR-002), and Pokemon data lookup are deterministic. AI generates only names (FR-004), descriptions (FR-005), and optional images (FR-013) — all on the surface layer. |
-| V | Responsive & Accessible UX | PASS | FR-014 (skeletons), FR-015 (toasts), FR-016 (error+retry), FR-017 (dark mode), FR-018 (responsive), FR-019 (animations) all specified. SC-005 defines viewport range 320px–2560px. |
+| Principle | Status | Verification |
+|-----------|--------|-------------|
+| I. Graceful Degradation | **PASS** | HF text generation is the only required API. SDXL image API falls back to Pokemon logo placeholder (FR-012). PokeAPI flavor text skipped silently (FR-020). DB unavailability shows error with retry (FR-027). |
+| II. Cloud-Persisted Architecture | **PASS** | Supabase (Postgres) stores all fusion data including images (FR-009, FR-026). localStorage for settings only. No backend server — SPA uses `@supabase/supabase-js` directly. |
+| III. Spec-Driven Workflow | **PASS** | Full Spec Kit pipeline: constitution → specify → plan → tasks → issues → implement. |
+| IV. Deterministic Core, AI Surface | **PASS** | Pure functions in src/lib/ (stat averaging, type checks) separated from AI in src/services/ (HF, SDXL). Automated tests (FR-032, FR-033) validate deterministic core without AI dependency. |
+| V. Responsive & Accessible UX | **PASS** | Tailwind responsive utilities (320px-2560px), dark mode with class strategy, loading skeletons, toast notifications, error states with retry. |
 
-**Gate Result**: ALL PASS — proceeding to Phase 0.
+All 5 principles PASS. No violations.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+specs/001-pokefusions-core/
+├── plan.md              # This file
+├── research.md          # Technology decisions, API research, testing strategy
+├── data-model.md        # Entity definitions, storage schema
+├── quickstart.md        # Setup and run instructions
+├── contracts/           # External API contracts
+│   ├── huggingface-api.md
+│   ├── pokeapi.md
+│   ├── stablediffusion-api.md
+│   └── supabase.md
+├── checklists/
+│   └── requirements.md
+└── tasks.md             # Task breakdown (generated by /speckit.tasks)
 ```
 
 ### Source Code (repository root)
 
 ```text
 src/
-├── components/           # React UI components
-│   ├── FusionCard/       # Fusion card display (stats, image, actions)
-│   ├── PokemonSelector/  # Manual Pokemon selection UI
-│   ├── Collection/       # Saved fusions gallery
-│   └── ui/               # Shared UI primitives (Toast, Skeleton, Button, Badge)
-├── data/
-│   └── pokedex.json      # Bundled 809 Pokemon dataset
-├── hooks/                # Custom React hooks (useLocalStorage, useToast)
-├── lib/                  # Pure logic (no React dependency)
-│   ├── fusion.ts         # Deterministic fusion mechanics (stats, names, compatibility)
-│   ├── pokemon.ts        # Pokemon data access & type utilities
-│   └── sanitize.ts       # DOMPurify wrapper for AI output
-├── services/             # External API integrations
-│   ├── huggingface.ts    # HF chat completions client (required)
-│   ├── pokeapi.ts        # PokeAPI flavor text client (optional)
-│   ├── stablediffusion.ts # Custom SDXL image generation client (optional)
-│   └── db.ts             # Supabase client SDK wrapper (save/load/delete fusions)
-├── context/              # React Context providers
-│   ├── FusionContext.tsx  # Fusion state management
-│   └── SettingsContext.tsx # API token, model ID, theme
-├── pages/                # Top-level route views
-│   ├── HomePage.tsx       # Random fusion generation
-│   ├── SelectPage.tsx     # Manual Pokemon selection
-│   └── CollectionPage.tsx # Saved fusions browsing
-├── App.tsx               # Root component, routing, providers
-├── main.tsx              # Entry point
-└── index.css             # Tailwind directives + global styles
+├── assets/              # Static assets (pokemon-logo.png)
+├── components/          # React UI components
+│   ├── Collection/      # Collection grid + empty state
+│   ├── FusionCard/      # Fusion card + stat bar
+│   ├── PokemonSelector/ # Pokemon browser grid + card
+│   └── ui/              # Shared primitives (Button, Toast, TypeBadge, etc.)
+├── context/             # React Context providers
+│   ├── FusionContext.tsx # Fusion generation, save, delete, regenerate state
+│   └── SettingsContext.tsx # API token, model ID, theme state
+├── data/                # Bundled datasets
+│   └── pokedex.json     # 809 Pokemon (Gens 1–7)
+├── hooks/               # Custom React hooks
+│   ├── useLocalStorage.ts
+│   └── useToast.ts
+├── lib/                 # Pure logic (deterministic, testable without AI)
+│   ├── fusion.ts        # Stat averaging, type checks, orchestrator, parser
+│   ├── pokemon.ts       # Pokemon data access (getAll, getById, etc.)
+│   └── sanitize.ts      # DOMPurify wrapper
+├── pages/               # Route-level page components
+│   ├── HomePage.tsx
+│   ├── SelectPage.tsx
+│   ├── CollectionPage.tsx
+│   └── SettingsPage.tsx
+├── services/            # External API clients (all mocked in tests)
+│   ├── huggingface.ts   # HF chat completions client
+│   ├── pokeapi.ts       # PokeAPI flavor text client
+│   ├── stablediffusion.ts # Custom SDXL image generation client
+│   └── db.ts            # Supabase client wrapper
+├── types.ts             # TypeScript type definitions
+├── App.tsx              # Root component with HashRouter
+├── main.tsx             # Entry point
+└── index.css            # Tailwind base + animations
 
 tests/
-├── unit/                 # Pure logic tests (fusion, pokemon, sanitize)
-├── integration/          # Component + service integration tests
-└── setup.ts              # Vitest setup (MSW, mocks)
+├── unit/                # Pure function tests (src/lib/)
+│   ├── fusion.test.ts
+│   ├── pokemon.test.ts
+│   └── sanitize.test.ts
+├── integration/         # Mocked API client tests (src/services/) + orchestrator
+│   ├── huggingface.test.ts
+│   ├── pokeapi.test.ts
+│   ├── stablediffusion.test.ts
+│   ├── db.test.ts
+│   └── orchestrator.test.ts
+└── setup.ts             # Test configuration (jsdom, RTL matchers)
 ```
 
-**Structure Decision**: Single-page application. Frontend under `src/` with clear separation between deterministic logic (`lib/`), React components (`components/`), external integrations (`services/`), and state management (`context/`). Supabase is accessed directly via `@supabase/supabase-js` in `services/db.ts` — no custom backend server. Credentials come from Vite env vars (`.env` file, not committed). Tests mirror the `lib/` and `components/` structure.
+**Structure Decision**: Single-project SPA layout. No backend directory — frontend connects directly to Supabase via client SDK and to external APIs via fetch. Test directory mirrors source structure with unit/ and integration/ subdirectories.
 
 ## Complexity Tracking
 
-No constitution violations identified. All principles pass cleanly with this design.
+No constitution violations to justify. All 5 principles PASS.

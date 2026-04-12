@@ -80,6 +80,55 @@
 - **No fusion data in localStorage**: All fusion persistence goes through the DB client SDK
 - **Typical payload**: <1KB for settings — no quota concerns
 
+## Testing Strategy
+
+### Testing Framework
+- **Decision**: Vitest + React Testing Library
+- **Rationale**: Vitest integrates natively with Vite for fast test execution with near-zero config. React Testing Library encourages testing user-visible behavior rather than implementation details. Both are already configured in T004.
+- **Alternatives considered**: Jest (slower startup, requires Babel/SWC transform); Cypress component testing (heavier, better suited for E2E)
+
+### Coverage & Scope
+- **Decision**: Unit tests + integration tests targeting ≥80% line coverage on `src/lib/` and `src/services/`
+- **Rationale**: `src/lib/` contains pure deterministic logic (stat averaging, type checks, parsing, sanitization) that is straightforward to unit test. `src/services/` contains API clients that must be tested with mocked responses to verify request construction, response parsing, error handling, and retry logic. The 80% target ensures meaningful coverage without forcing fragile tests on UI components.
+- **Alternatives considered**: E2E tests with Playwright (too heavy for capstone scope); 100% coverage (diminishing returns on UI wiring code)
+
+### Unit Test Targets (`src/lib/`)
+- `fusion.ts`: stat averaging (rounding, edge cases), type-compatibility check, name blending, orchestrator pipeline
+- `pokemon.ts`: getById, getByName, getTypes lookups
+- `sanitize.ts`: DOMPurify wrapper (strips dangerous tags, preserves allowed tags)
+
+### Integration Test Targets (`src/services/`)
+- `huggingface.ts`: auth header, request format, response parsing, 429 rate-limit detection, retry-once on malformed response, timeout handling
+- `pokeapi.ts`: flavor text extraction, language filtering, caching, silent fallback on error
+- `stablediffusion.ts`: health probe, generate request/response, base64 handling, silent fallback
+- `db.ts`: Supabase save/list/delete operations, camelCase↔snake_case mapping, error handling, retry on network failure
+
+### Orchestrator Integration Tests
+- Full fusion pipeline with all services mocked: random pair → stats → HF text → PokeAPI flavor → SDXL image → assembled Fusion object
+- Verify graceful degradation when optional services are mocked as unavailable
+- Verify timeout enforcement (text path <15s per SC-001)
+
+### Test File Structure
+```
+tests/
+├── unit/
+│   ├── fusion.test.ts
+│   ├── pokemon.test.ts
+│   └── sanitize.test.ts
+├── integration/
+│   ├── huggingface.test.ts
+│   ├── pokeapi.test.ts
+│   ├── stablediffusion.test.ts
+│   ├── db.test.ts
+│   └── orchestrator.test.ts
+└── setup.ts
+```
+
+### Mocking Strategy
+- **fetch**: Use `vi.fn()` to mock global `fetch` for HTTP-based service clients (HF, PokeAPI, SDXL)
+- **Supabase**: Mock `@supabase/supabase-js` `createClient` to return a mock client with chainable `.from().select()/.insert()/.delete()` methods
+- **No real API calls in tests**: All external services are mocked. Tests run offline and deterministically.
+
 ## Pokemon Dataset
 
 - **Source**: Bundled static `pokedex.json` (809 species, Gens 1–7, ending at Melmetal)
