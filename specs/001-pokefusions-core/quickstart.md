@@ -7,7 +7,7 @@
 - Git
 - Hugging Face account with API token (free tier works)
 - Supabase account with a project (free tier works) — get project URL and anon key from Settings > API
-- (Optional) Stable Diffusion WebUI running locally on port 7860
+- (Optional) Custom SDXL image generation API running (default: `http://192.168.4.100:8000`)
 
 ## Setup
 
@@ -81,6 +81,7 @@ tests/
 ## Environment Notes
 
 - **`.env` file required for Supabase**: Copy `.env.example` to `.env` and fill in your Supabase project URL and anon key. These are loaded at build time via Vite's `import.meta.env`.
+- **`VITE_SD_API_URL` (optional)**: Set to your image generation API URL if not using the default (`http://192.168.4.100:8000`).
 - **HF API token**: Entered by the user in the Settings UI and stored in localStorage (not in `.env`)
 - **No backend server**: The app connects directly to Supabase via `@supabase/supabase-js` client SDK.
 - **GitHub Pages deployment**: `npm run build` produces static files in `dist/`; Vite `base` is configured for the repo path. Supabase env vars must be set in the deployment environment.

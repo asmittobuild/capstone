@@ -66,7 +66,7 @@ src/
 ├── services/             # External API integrations
 │   ├── huggingface.ts    # HF chat completions client (required)
 │   ├── pokeapi.ts        # PokeAPI flavor text client (optional)
-│   ├── stablediffusion.ts # Local SD WebUI client (optional)
+│   ├── stablediffusion.ts # Custom SDXL image generation client (optional)
 │   └── db.ts             # Supabase client SDK wrapper (save/load/delete fusions)
 ├── context/              # React Context providers
 │   ├── FusionContext.tsx  # Fusion state management

@@ -24,7 +24,7 @@
 - [ ] T005 [P] Configure ESLint and Prettier for TypeScript + React in .eslintrc.cjs and .prettierrc
 - [ ] T006 [P] Configure Vite for GitHub Pages deployment with correct base path in vite.config.ts
 - [ ] T007 Create base TypeScript types for Pokemon, PokemonStats, Fusion, FusionParent, and Settings in src/types.ts
-- [ ] T008 [P] Create .env.example with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY placeholders and add .env to .gitignore
+- [ ] T008 [P] Create .env.example with VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and VITE_SD_API_URL placeholders, and add .env to .gitignore
 - [ ] T008b Create `fusions` table in Supabase project using SQL DDL from contracts/supabase.md (manual step via Supabase SQL Editor)
 
 ---
@@ -42,7 +42,7 @@
 - [ ] T013 [P] Implement type-compatibility check function (exclude pairs with identical type combinations) in src/lib/fusion.ts
 - [ ] T014 Implement Hugging Face chat completions client with auth, request/response parsing, rate-limit detection (HTTP 429 + Retry-After header), automatic retry-once on empty or malformed AI responses, and error handling in src/services/huggingface.ts
 - [ ] T015 [P] Implement PokeAPI flavor text client with language filtering, version preference, in-memory caching, and silent fallback in src/services/pokeapi.ts
-- [ ] T016 [P] Implement Stable Diffusion WebUI client with availability probe, txt2img request, base64 response handling, and silent fallback in src/services/stablediffusion.ts
+- [ ] T016 [P] Implement SDXL image generation client with `GET /health` availability probe, `POST /generate` text-to-image request (1024×1024, guidance_scale 3.0), base64 response handling (`{ image, seed }`), configurable base URL via `VITE_SD_API_URL`, and silent fallback in src/services/stablediffusion.ts (per contracts/stablediffusion-api.md)
 - [ ] T017 [P] Implement useLocalStorage custom hook for typed get/set with JSON serialization in src/hooks/useLocalStorage.ts (used for settings only: API token, model ID, theme)
 - [ ] T018 [P] Implement useToast custom hook for toast notification state management (success, error, info with 3s auto-dismiss) in src/hooks/useToast.ts
 - [ ] T019 Implement SettingsContext provider with apiToken, modelId, theme state (light/dark/system), localStorage persistence, first-run detection, and dark mode class-based switching on document root in src/context/SettingsContext.tsx
@@ -121,7 +121,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T043 [US4] Implement image generation integration in the fusion orchestrator: probe SD availability, generate image if available, attach base64 to Fusion, fall back to null silently in src/lib/fusion.ts
+- [ ] T043 [US4] Implement image generation integration in the fusion orchestrator: probe SDXL API via `GET /health`, call `POST /generate` with fusion description prompt, attach base64 image to Fusion, fall back to null silently in src/lib/fusion.ts
 - [ ] T044 [US4] Add Pokemon logo placeholder asset as src/assets/pokemon-logo.png
 - [ ] T045 [US4] Update FusionCard to display imageBase64 as inline image when present, or Pokemon logo placeholder when null, with smooth fade-in transition in src/components/FusionCard/FusionCard.tsx
 

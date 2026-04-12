@@ -27,6 +27,10 @@
 - Q: Should fusion images be persisted when saving? → A: Yes; if an AI-generated image exists, it should be stored alongside the fusion text data so it is available when the user revisits their collection. This requires a hosted database since localStorage cannot handle image storage at scale.
 - Q: Which hosted database should be used? → A: Supabase (Postgres). The app connects directly via `@supabase/supabase-js` client SDK. Supabase project URL and anon key are provided via Vite environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) at build time.
 
+### Session 2026-04-12
+
+- Q: Which image generation API and endpoint should the app use? → A: Custom SDXL API at a configurable URL (default `http://192.168.4.100:8000`). Use the `POST /generate` endpoint for text-to-image generation. Base URL is configurable via `VITE_SD_API_URL` env var.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Generate a Random Fusion (Priority: P1)
@@ -153,7 +157,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-010**: System MUST allow users to delete saved fusions
 - **FR-011**: System MUST allow users to regenerate a fusion (new AI name and description) for the same parent pair
 - **FR-012**: System MUST display a Pokemon logo placeholder when AI image generation is unavailable
-- **FR-013**: System MUST display AI-generated Pokemon-style images on fusion cards when the local image service is available
+- **FR-013**: System MUST generate fusion images using `POST /generate` (SDXL text-to-image) on the configured image service when available
 - **FR-014**: System MUST show loading skeleton cards while fusions are being generated
 - **FR-015**: System MUST show toast notifications for success, error, and informational events with 3-second auto-dismiss behavior
 - **FR-016**: System MUST show an error state with a retry button when the required AI service fails
@@ -199,7 +203,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - Users are using a modern browser that supports local storage (latest two major versions of Chrome, Firefox, Safari, or Edge)
 - The Pokemon dataset covers base species only: no regional variants, mega evolutions, Gigantamax forms, or other special forms
 - The app is designed for single-user use with no authentication for v1 — all users share the same DB endpoint
-- The local image generation service, when used, runs on the same machine or local network as the user
+- The image generation service is a custom SDXL API at a configurable URL (`VITE_SD_API_URL` env var, default `http://192.168.4.100:8000`), accessible on the local network
 - The type-compatibility filter for random mode excludes pairs where both Pokemon share the exact same type combination; all other pairings are valid
 - AI-generated content (names, descriptions, images) is non-deterministic — the same inputs may produce different outputs
 - No offline mode is required — the app needs the AI service and database to function fully

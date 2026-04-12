@@ -49,14 +49,17 @@
 - **Gotcha**: Flavor text contains `\f` (form feed) and `\n` characters that must be cleaned. Not all Pokemon have entries for all game versions.
 - **Fallback**: Skip enrichment silently if API is unreachable (FR-020, Constitution Principle I).
 
-### Stable Diffusion WebUI (Optional)
-- **Endpoint**: `POST http://localhost:7860/sdapi/v1/txt2img`
-- **Auth**: None (local service)
-- **Request**: `{ prompt, negative_prompt, steps, width, height, cfg_scale, seed }`
-- **Response**: `{ images: ["base64_encoded_string"] }` — first element is the generated image
-- **Prompt strategy**: Pokemon art style prompt engineering (e.g., "Pokemon-style creature, digital art, vibrant colors, [fusion description]")
-- **Fallback**: Display Pokemon logo placeholder (FR-012). Detect unavailability via fetch timeout or connection refused.
+### Image Generation — Custom SDXL API (Optional)
+- **Endpoint**: `POST {VITE_SD_API_URL}/generate` (default: `http://192.168.4.100:8000/generate`)
+- **Auth**: None (local network service)
+- **Health check**: `GET /health` — 200 means available, timeout/error means unavailable
+- **Request**: `{ prompt, negative_prompt, steps, width, height, guidance_scale, seed }`
+- **Response**: `{ image: "base64_string", seed: 42 }` — single image string (not array)
+- **Resolution**: 1024×1024 (SDXL native), `guidance_scale` default 3.0, `steps` default 30
+- **Prompt strategy**: Pokemon art style prompt engineering (e.g., "Pokemon-style creature fusion, digital art, vibrant colors, [fusion description]")
+- **Fallback**: Display Pokemon logo placeholder (FR-012). Detect unavailability via `GET /health` timeout (2s) or connection refused.
 - **Gotcha**: Images are persisted to the hosted DB along with all other fusion fields (FR-026). They're displayed inline as `data:image/png;base64,...`.
+- **Gotcha**: Base URL is configurable via `VITE_SD_API_URL` env var (add to `.env.example`). Not committed to git.
 
 ## Persistence Strategy
 

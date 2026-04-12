@@ -142,8 +142,9 @@ shows maturity beyond the happy path.
 - **Required API**: Hugging Face chat completions
   (OpenAI-compatible endpoint, bearer token auth)
 - **Optional APIs**: PokeAPI (flavor text, cached
-  in-memory), Stable Diffusion WebUI (localhost:7860,
-  base64 image response)
+  in-memory), Custom SDXL API (configurable URL via
+  VITE_SD_API_URL, default 192.168.4.100:8000,
+  POST /generate text-to-image, base64 image response)
 - **Persistence**: Supabase (Postgres) for fusion data
   and images; browser localStorage for user settings only
 - **Development tool**: GitHub Copilot with Spec Kit
