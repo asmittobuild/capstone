@@ -61,15 +61,15 @@
 ## Persistence Strategy
 
 ### Hosted Database (Fusions)
-- **Technology**: TBD (DynamoDB, MongoDB Atlas, Supabase, etc.) — abstracted behind `backend/src/db.ts`
+- **Technology**: TBD (Supabase, Firebase, MongoDB Atlas, etc.) — accessed via client SDK directly from the SPA
 - **What is stored**: Complete fusion objects including imageBase64, parent data, stats, AI-generated text
-- **Access**: Via lightweight backend API (see contracts/backend-api.md)
+- **Access**: Frontend connects directly to hosted DB via its client SDK (no custom backend server)
 - **No practical storage limit**: Hosted DB handles capacity; no quota management needed
-- **Error handling**: When backend/DB is unreachable, show error banner with retry button (FR-027). Retain current fusion in memory so user can retry without regenerating.
+- **Error handling**: When DB is unreachable, show error banner with retry button (FR-027). Retain current fusion in memory so user can retry without regenerating.
 
 ### localStorage (Settings Only)
 - **Key**: `pokefusions_settings` — JSON object with `apiToken`, `modelId`, `theme`
-- **No fusion data in localStorage**: All fusion persistence goes through the backend API
+- **No fusion data in localStorage**: All fusion persistence goes through the DB client SDK
 - **Typical payload**: <1KB for settings — no quota concerns
 
 ## Pokemon Dataset

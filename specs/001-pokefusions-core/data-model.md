@@ -32,7 +32,7 @@ Source: Bundled `pokedex.json` (read-only, 809 entries)
 
 ### Fusion
 
-Generated at runtime, optionally persisted to localStorage.
+Generated at runtime, optionally persisted to hosted database.
 
 | Field | Type | Description |
 |-------|------|-------------|

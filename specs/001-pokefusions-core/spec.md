@@ -25,7 +25,7 @@
 
 - Q: How does the Pokemon selector work for manual selection (search/filter behavior)? → A: Users can search by name (text input) and optionally filter by type. The 809-entry grid should use virtualization or lazy loading for performance. No pagination — all results visible as the user scrolls.
 - Q: Should fusion images be persisted when saving? → A: Yes; if an AI-generated image exists, it should be stored alongside the fusion text data so it is available when the user revisits their collection. This requires a hosted database since localStorage cannot handle image storage at scale.
-- Q: Which hosted database should be used? → A: TBD — the specific database technology is a deferred decision. The architecture should use a lightweight backend API layer that abstracts the DB choice.
+- Q: Which hosted database should be used? → A: TBD — the specific database technology is a deferred decision. The app connects directly to the hosted DB via its client SDK (no custom backend server).
 
 ## User Scenarios & Testing
 
@@ -204,4 +204,4 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - The Hugging Face API token is provided by the user via a settings panel and stored in localStorage — it is never hardcoded in source
 - AI-generated images are persisted to the hosted database alongside fusion text data when available
 - The Pokemon dataset is a bundled static JSON file (809 base species, Gens 1–7); no runtime fetching of the full roster is required
-- The specific hosted database technology is a deferred decision; the backend API abstracts the DB choice
+- The specific hosted database technology is a deferred decision; the app connects directly via client SDK

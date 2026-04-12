@@ -1,28 +1,28 @@
 <!--
   Sync Impact Report
-  Version change: 1.0.1 → 2.0.0
+  Version change: 1.0.1 → 2.0.0 → 2.0.1
   Bump rationale: MAJOR — Principle II rewritten from Local-First
   to Cloud-Persisted Architecture to support hosted DB with image storage
+  PATCH 2.0.1 — Removed backend server; SPA connects directly to
+  hosted DB via client SDK
 
   Changed principles:
   - II. Local-First Architecture → II. Cloud-Persisted Architecture
     (hosted DB for fusion data + images; localStorage for settings only)
+    No custom backend — frontend uses DB client SDK directly
 
   Updated sections:
   - I. Graceful Degradation: added DB unavailability fallback
-  - Technology & Scope Constraints: persistence updated
+  - Technology & Scope Constraints: persistence updated, backend removed
 
   Impact on dependent artifacts:
-  ⚠️ spec.md — FR-009, FR-022, FR-026, FR-027, assumptions need update
-  ⚠️ plan.md — Technical Context, project structure, Constitution Check
-  ⚠️ data-model.md — localStorage schema → DB schema
-  ⚠️ tasks.md — add backend/DB tasks, modify persistence tasks
-  ⚠️ contracts/ — add backend API contract
+  ⚠️ spec.md — FR-009, FR-026, FR-027, assumptions: remove backend refs
+  ⚠️ plan.md — project structure: remove backend/ directory
+  ⚠️ tasks.md — remove backend tasks, add DB client SDK task
+  ⚠️ contracts/ — remove backend API contract
 
   Follow-up TODOs:
   - Choose specific hosted DB (deferred — plan uses TBD)
-  - Add backend API contract
-  - Update tasks for backend setup
 -->
 
 # PokeFusions Constitution
@@ -65,8 +65,8 @@ browser localStorage for fast local access.
   data when present
 - No user accounts or authentication for v1 (single-user
   with a shared DB endpoint)
-- A lightweight backend API layer mediates between the
-  frontend SPA and the hosted DB
+- The frontend connects directly to the hosted DB via
+  its client SDK (no custom backend server)
 - The frontend MUST degrade gracefully if the DB is
   temporarily unreachable (show error, retain in-memory
   state)
@@ -148,8 +148,6 @@ shows maturity beyond the happy path.
   base64 image response)
 - **Persistence**: hosted database (TBD) for fusion data
   and images; browser localStorage for user settings only
-- **Backend**: lightweight API layer (TBD — e.g., Express,
-  serverless functions) between frontend and DB
 - **Development tool**: GitHub Copilot with Spec Kit
 - **MCP**: GitHub MCP server for issue management
 
@@ -179,4 +177,4 @@ implementation must comply with these principles.
 - **Compliance**: every plan.md must include a Constitution
   Check gate that validates alignment before implementation
 
-**Version**: 2.0.0 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-11
+**Version**: 2.0.1 | **Ratified**: 2026-04-10 | **Last Amended**: 2026-04-11
