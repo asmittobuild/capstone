@@ -18,3 +18,16 @@ then speckit plan
 decided to switch to hosted db; it tried to convince me to stick to local othrewise it was a major architecture change and needed a major amendement to the constitution; which I found interesting and actually liked it; since it AIs usually don't argue with you :p
 
 azure cosmos db asmitto-ai-bootcamp
+
+during planning it went overboard creating a new backenb server; so I had to guide it to go back to running a "SPA". I was surprised for such a leap cause up until that point it really understood the point of the app being 'minimalistic'
+
+supabase
+ai-bootcamp-pokefusions
+pokefusions123456*
+
+ai-bootcamp-pokefusions
+sbp_eac13f528bf72847d404e2717c47ebc730855110
+
+installed the mcp
+
+asked it to sync up the changes /create repo
