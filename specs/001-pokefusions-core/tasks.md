@@ -3,7 +3,7 @@
 **Input**: Design documents from `/specs/001-pokefusions-core/`
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
 
-**Tests**: Not explicitly requested in the specification. Test tasks are omitted.
+**Tests**: Required per FR-032 and FR-033. Unit tests for src/lib/ (pure functions) and integration tests for src/services/ (mocked APIs) + orchestrator. Coverage target: ≥80% line coverage on src/lib/ and src/services/ (SC-009).
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -20,7 +20,7 @@
 - [ ] T001 Initialize Vite + React + TypeScript project with `npm create vite@latest` in repository root
 - [ ] T002 Install core dependencies: react-router-dom, dompurify, @types/dompurify, uuid, @types/uuid, @supabase/supabase-js
 - [ ] T003 [P] Configure Tailwind CSS 3 with dark mode class strategy in tailwind.config.ts and src/index.css
-- [ ] T004 [P] Configure Vitest and React Testing Library in vite.config.ts and tests/setup.ts
+- [ ] T004 [P] Configure Vitest and React Testing Library with coverage thresholds (≥80% on src/lib/ and src/services/) in vite.config.ts and tests/setup.ts
 - [ ] T005 [P] Configure ESLint and Prettier for TypeScript + React in .eslintrc.cjs and .prettierrc
 - [ ] T006 [P] Configure Vite for GitHub Pages deployment with correct base path in vite.config.ts
 - [ ] T007 Create base TypeScript types for Pokemon, PokemonStats, Fusion, FusionParent, and Settings in src/types.ts
@@ -56,6 +56,35 @@
 - [ ] T027 [P] Create DBErrorBanner component that appears when Supabase is unreachable, with informative message and retry button (FR-027) in src/components/ui/DBErrorBanner.tsx
 
 **Checkpoint**: Foundation ready — all shared services, Supabase client, utilities, types, and UI primitives are in place. User story implementation can now begin.
+
+---
+
+## Phase 2b: Automated Tests (FR-032, FR-033)
+
+**Purpose**: Unit tests for all pure functions in src/lib/ and integration tests for all service clients in src/services/ with mocked APIs. Validates deterministic core without AI dependency (Constitution Principle IV).
+
+**⚠️ TIMING**: Tests should be written alongside or immediately after their implementation targets in Phase 2. They can also be written after user story phases as a test-after pass.
+
+### Unit Tests (FR-032) — src/lib/
+
+- [ ] T057 [P] Write unit tests for stat averaging function: verify Math.round per stat, symmetric inputs, zero stats, max stats in tests/unit/fusion.test.ts
+- [ ] T058 [P] Write unit tests for type-compatibility check: identical single-type, identical dual-type, different types, partial overlap in tests/unit/fusion.test.ts
+- [ ] T059 [P] Write unit tests for AI response parser: valid response extraction, fallback name generation, empty response, malformed JSON in tests/unit/fusion.test.ts
+- [ ] T060 [P] Write unit tests for Pokemon data access: getById (valid/invalid), getByName (case-insensitive), getAll count, getTypes in tests/unit/pokemon.test.ts
+- [ ] T061 [P] Write unit tests for DOMPurify sanitization wrapper: strips script tags, preserves allowed tags (b, i, em, strong, p, br), strips attributes, handles empty/null input in tests/unit/sanitize.test.ts
+
+### Integration Tests (FR-032) — src/services/
+
+- [ ] T062 [P] Write integration tests for Hugging Face client: auth header construction, request body format, successful response parsing, 429 rate-limit detection with Retry-After header, retry-once on empty response, timeout handling in tests/integration/huggingface.test.ts
+- [ ] T063 [P] Write integration tests for PokeAPI client: flavor text extraction with language filtering, version preference, in-memory cache hit/miss, silent fallback on network error in tests/integration/pokeapi.test.ts
+- [ ] T064 [P] Write integration tests for SDXL client: health probe success/failure, generate request with correct parameters, base64 response handling, silent fallback on timeout/error in tests/integration/stablediffusion.test.ts
+- [ ] T065 [P] Write integration tests for Supabase DB wrapper: save with camelCase↔snake_case mapping, list with descending order, delete by ID, error handling, retry on network failure in tests/integration/db.test.ts
+
+### Orchestrator Integration Tests (FR-033)
+
+- [ ] T066 Write integration tests for fusion generation orchestrator: full pipeline with all services mocked (random pair → stats → HF text → PokeAPI flavor → SDXL image → assembled Fusion), graceful degradation when optional services unavailable, timeout enforcement in tests/integration/orchestrator.test.ts
+
+**Checkpoint**: All unit and integration tests pass. Coverage meets ≥80% on src/lib/ and src/services/.
 
 ---
 
@@ -170,6 +199,7 @@
 - [ ] T054 Validate all AI-generated text passes through DOMPurify sanitization — audit every render path for unsanitized content (FR-028)
 - [ ] T055 Run quickstart.md validation: fresh clone, copy .env.example to .env with Supabase credentials, install, dev server, generate fusion, save to Supabase, reload, verify persistence across sessions
 - [ ] T056 Final build verification: npm run build succeeds, preview serves correctly, no console errors
+- [ ] T067 Run `npm run test:coverage` and verify ≥80% line coverage on src/lib/ and src/services/ directories per SC-009
 
 ---
 
@@ -179,6 +209,7 @@
 
 - **Phase 1 (Setup)**: No dependencies — start immediately
 - **Phase 2 (Foundational)**: Depends on Phase 1 (project must be initialized)
+- **Phase 2b (Tests)**: Depends on Phase 2 (tests target src/lib/ and src/services/ implementations). Can also be deferred and written incrementally alongside user story phases.
 - **Phase 3–8 (User Stories)**: All depend on Phase 2 (foundational must be complete, including Supabase client)
   - US1 (Phase 3): No dependency on other stories — **this is the MVP**
   - US2 (Phase 4): No dependency on US1 (uses same fusion pipeline independently)
@@ -186,7 +217,7 @@
   - US4 (Phase 6): No dependency on other stories (extends FusionCard image handling)
   - US5 (Phase 7): Should come after US1 (needs a fusion to regenerate)
   - US6 (Phase 8): Can be done at any point but best after US1–US3 for meaningful content to style
-- **Phase 9 (Polish)**: Depends on all desired user stories being complete
+- **Phase 9 (Polish)**: Depends on all desired user stories being complete and Phase 2b tests passing
 
 ### Within Each User Story
 
@@ -201,4 +232,5 @@
 **Phase 3**: T031, T032 can run in parallel
 **Phase 4**: T035, T036 can run in parallel
 **Phase 5**: T041 can run in parallel with other US3 tasks
+**Phase 2b**: T057–T061 can all run in parallel. T062–T065 can all run in parallel. T066 depends on T062–T065 (uses same mocking patterns).
 **Phase 8**: T050, T051, T052 can run in parallel
