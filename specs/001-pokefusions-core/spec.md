@@ -31,6 +31,11 @@
 
 - Q: Which image generation API and endpoint should the app use? → A: Custom SDXL API at a configurable URL (default `http://192.168.4.100:8000`). Use the `POST /generate` endpoint for text-to-image generation. Base URL is configurable via `VITE_SD_API_URL` env var.
 
+### Session 2026-04-12 (2)
+
+- Q: What level of automated testing should the spec require? → A: Unit tests + integration tests. Unit tests for pure functions (stat averaging, type checks, parsing, sanitization); integration tests for service clients and the fusion orchestrator with mocked APIs. Vitest + React Testing Library.
+- Q: What code coverage target should be required for critical modules? → A: 80% line coverage on src/lib/ and src/services/ directories.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Generate a Random Fusion (Priority: P1)
@@ -176,6 +181,8 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **FR-029**: System MUST allow the user to configure the Hugging Face model ID in the settings panel, with a sensible default pre-filled
 - **FR-030**: System MUST provide a searchable, filterable Pokemon selector with name search and optional type filter, using virtualization or lazy loading for the full 809-entry roster
 - **FR-031**: System MUST provide a dedicated settings route (/settings) for API token, model ID, and theme configuration
+- **FR-032**: System MUST include unit tests for all pure functions in src/lib/ (stat averaging, type-compatibility checks, name blending, AI response parsing, sanitization) and integration tests for service clients in src/services/ (Hugging Face, PokeAPI, SDXL, Supabase) using mocked API responses
+- **FR-033**: System MUST include integration tests for the fusion generation orchestrator verifying the end-to-end generation pipeline with mocked external services
 
 ### Key Entities
 
@@ -196,6 +203,7 @@ The app provides a polished experience across mobile and desktop with dark mode 
 - **SC-006**: 100% of error scenarios display a user-friendly message with a recovery action (retry, dismiss, or navigate)
 - **SC-007**: Users can manually select and fuse any two different Pokemon from the full roster of available base species
 - **SC-008**: Regenerating a fusion produces a different name and description at least 90% of the time
+- **SC-009**: Automated tests achieve ≥80% line coverage on src/lib/ and src/services/ directories, with all tests passing in CI
 
 ## Assumptions
 
