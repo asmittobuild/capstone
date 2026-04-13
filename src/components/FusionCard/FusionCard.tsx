@@ -117,12 +117,16 @@ export function FusionCard({
             </Button>
           )}
           {!isSaved && onDelete && (
-            <Button variant="danger" onClick={onDelete}>
+            <Button variant="danger" onClick={() => {
+              if (window.confirm('Are you sure you want to discard this fusion?')) onDelete()
+            }}>
               Discard
             </Button>
           )}
           {isSaved && onDelete && (
-            <Button variant="danger" onClick={onDelete}>
+            <Button variant="danger" onClick={() => {
+              if (window.confirm('Are you sure you want to delete this fusion?')) onDelete()
+            }}>
               Delete
             </Button>
           )}
