@@ -1,0 +1,77 @@
+import { useNavigate } from 'react-router-dom'
+import { useFusion } from '../context/FusionContext'
+import { useSettings } from '../context/SettingsContext'
+import { FusionCard } from '../components/FusionCard/FusionCard'
+import { SkeletonCard } from '../components/ui/SkeletonCard'
+import { Button } from '../components/ui/Button'
+
+export function HomePage() {
+  const navigate = useNavigate()
+  const { isFirstRun } = useSettings()
+  const {
+    currentFusion,
+    isLoading,
+    error,
+    rateLimitCooldown,
+    generateRandom,
+    regenerate,
+    saveFusion,
+  } = useFusion()
+
+  const handleGenerate = () => {
+    if (isFirstRun) {
+      navigate('/settings')
+      return
+    }
+    generateRandom()
+  }
+
+  return (
+    <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">PokeFusions</h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Generate unique AI-powered Pokemon fusions
+        </p>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          variant="primary"
+          onClick={handleGenerate}
+          loading={isLoading}
+          disabled={rateLimitCooldown > 0}
+        >
+          {rateLimitCooldown > 0
+            ? `Wait ${rateLimitCooldown}s`
+            : isFirstRun
+              ? 'Set API Token First'
+              : 'Generate Fusion'}
+        </Button>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-center">
+          <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+          <button
+            onClick={handleGenerate}
+            className="mt-2 text-sm text-red-600 dark:text-red-400 underline hover:no-underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {isLoading && <SkeletonCard />}
+
+      {currentFusion && !isLoading && (
+        <FusionCard
+          fusion={currentFusion}
+          onRegenerate={regenerate}
+          onSave={saveFusion}
+          isRegenerating={isLoading}
+        />
+      )}
+    </div>
+  )
+}

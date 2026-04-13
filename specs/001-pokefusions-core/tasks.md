@@ -96,13 +96,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T028 [US1] Implement fusion generation orchestrator: random pair selection → stat averaging → HF text generation (max 12s timeout) → optional PokeAPI flavor text (max 3s, abort if slower) → optional SD image (non-blocking, max 15s) → assemble Fusion object. Total text-generation path must complete within 15s per SC-001. In src/lib/fusion.ts
-- [ ] T029 [US1] Implement AI response parser to extract fusion name and description from HF chat completion content with fallback name generation in src/lib/fusion.ts
-- [ ] T030 [US1] Implement FusionContext provider with current fusion state, generate action, loading/error states, rate-limit cooldown timer (parse Retry-After / X-RateLimit-Reset headers), and Generate button disable/re-enable logic (FR-024) in src/context/FusionContext.tsx
-- [ ] T031 [P] [US1] Create FusionCard component displaying fusion name, parent names with TypeBadges, six color-coded stats (green/yellow/red by value) with total, sanitized AI description, image or Pokemon logo placeholder, creation timestamp, and action buttons in src/components/FusionCard/FusionCard.tsx
-- [ ] T032 [P] [US1] Create StatBar sub-component with color coding (green ≥100, yellow ≥50, red <50) and value display in src/components/FusionCard/StatBar.tsx
-- [ ] T033 [US1] Create HomePage with "Generate Fusion" button, API token check gate (FR-023), loading skeleton, error state with retry, rate-limit cooldown display, and fusion card output in src/pages/HomePage.tsx
-- [ ] T034 [US1] Wire FusionContext provider into App.tsx wrapping all routes in src/App.tsx
+- [x] T028 [US1] Implement fusion generation orchestrator: random pair selection → stat averaging → HF text generation (max 12s timeout) → optional PokeAPI flavor text (max 3s, abort if slower) → optional SD image (non-blocking, max 15s) → assemble Fusion object. Total text-generation path must complete within 15s per SC-001. In src/lib/fusion.ts
+- [x] T029 [US1] Implement AI response parser to extract fusion name and description from HF chat completion content with fallback name generation in src/lib/fusion.ts
+- [x] T030 [US1] Implement FusionContext provider with current fusion state, generate action, loading/error states, rate-limit cooldown timer (parse Retry-After / X-RateLimit-Reset headers), and Generate button disable/re-enable logic (FR-024) in src/context/FusionContext.tsx
+- [x] T031 [P] [US1] Create FusionCard component displaying fusion name, parent names with TypeBadges, six color-coded stats (green/yellow/red by value) with total, sanitized AI description, image or Pokemon logo placeholder, creation timestamp, and action buttons in src/components/FusionCard/FusionCard.tsx
+- [x] T032 [P] [US1] Create StatBar sub-component with color coding (green ≥100, yellow ≥50, red <50) and value display in src/components/FusionCard/StatBar.tsx
+- [x] T033 [US1] Create HomePage with "Generate Fusion" button, API token check gate (FR-023), loading skeleton, error state with retry, rate-limit cooldown display, and fusion card output in src/pages/HomePage.tsx
+- [x] T034 [US1] Wire FusionContext provider into App.tsx wrapping all routes in src/App.tsx
 
 **Checkpoint**: User Story 1 is complete. User can generate random fusions with one click. This is the MVP.
 
