@@ -45,6 +45,14 @@ export function HomePage() {
     generateRandom()
   }
 
+  // Discard handler: clear currentFusion
+  const handleDiscardFusion = () => {
+    // Use context setter if available, else fallback to reload
+    if (typeof window !== 'undefined' && window.location) {
+      window.location.reload(); // fallback: reload page to clear state
+    }
+  }
+
   return (
     <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
       <div className="text-center space-y-2">
@@ -88,6 +96,7 @@ export function HomePage() {
           fusion={currentFusion}
           onRegenerate={regenerate}
           onSave={handleSaveFusion}
+          onDelete={handleDiscardFusion}
           isRegenerating={isLoading}
         />
       )}

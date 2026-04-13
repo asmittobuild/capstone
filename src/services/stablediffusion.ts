@@ -38,7 +38,7 @@ export async function generateImage(prompt: string, negativePrompt: string): Pro
         width: 1024,
         height: 1024,
         steps: 30,
-        guidance_scale: 3.0,
+        guidance_scale: 7.0,
         seed: null,
       }),
       signal: controller.signal,

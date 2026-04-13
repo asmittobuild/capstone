@@ -50,3 +50,6 @@ I ran out of sonnet at this point and got forced to gpt
 the major gap I see is that in many cases things we would assume would be clarified are not (how to generate the image for example)
 I let it run and then I worked on an update to see how the flow would be. but when I did; I thought it would basically update the tasks needed to do the new thing from scratch; but it instead updated them based on the existing code; so it assumed there was code already present; so the end result was an inconssitent spec 99% creating new code but with a task to update code that (if ran from scratch) wouldn't exist
 So i pushed on that; and it basically said 'oh yeah i should've done a patch (which is what I expected)
+
+after this it worked fine but it got really slow (i assumebecause of gpt4.1) and I also noticed it got dumber (a lot) so I decided to polish it vibe coding as I didn't really trust gpt4.1 and it was so slow that it made it tedious to go back and forth
+

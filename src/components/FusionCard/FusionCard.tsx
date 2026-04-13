@@ -33,12 +33,13 @@ export function FusionCard({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-md mx-auto transition-all duration-300">
       {/* Image */}
-      <div className="relative h-64 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+      <div className="relative h-84 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
         {fusion.imageBase64 ? (
           <img
             src={`data:image/png;base64,${fusion.imageBase64}`}
             alt={fusion.name}
-            className="h-full w-full object-cover transition-opacity duration-500"
+            className="max-h-full max-w-full object-contain rounded-xl shadow transition-opacity duration-500 bg-white"
+            style={{ background: 'rgba(255,255,255,0.8)' }}
           />
         ) : (
           <img
@@ -72,18 +73,18 @@ export function FusionCard({
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="space-y-1.5">
+        {/* Stats (two columns) */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
           <StatBar label="HP" value={fusion.stats.hp} />
           <StatBar label="Attack" value={fusion.stats.attack} />
           <StatBar label="Defense" value={fusion.stats.defense} />
           <StatBar label="Sp. Atk" value={fusion.stats.spAttack} />
           <StatBar label="Sp. Def" value={fusion.stats.spDefense} />
           <StatBar label="Speed" value={fusion.stats.speed} />
-          <div className="flex items-center justify-end gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 pt-1 border-t border-gray-200 dark:border-gray-700">
-            <span>Total</span>
-            <span>{totalStats}</span>
-          </div>
+        </div>
+        <div className="flex items-center justify-end gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 pt-1 border-t border-gray-200 dark:border-gray-700">
+          <span>Total</span>
+          <span>{totalStats}</span>
         </div>
 
         {/* Description */}

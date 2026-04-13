@@ -21,15 +21,15 @@ export async function generateImagePrompts(
       {
         role: 'system',
         content:
-          'You are an expert prompt engineer for Stable Diffusion XL (SDXL). Given a Pokemon fusion name and description, generate two prompts:\n1. A positive prompt for high-quality, vibrant, Pokemon-style digital art.\n2. A negative prompt listing undesirable traits (e.g., blurry, deformed, low quality, etc.). Respond in JSON: { "positive": "...", "negative": "..." }',
+          'Given a Pokemon fusion name and description, generate two prompts:\n1. A positive prompt for official pokedex illustration style, pokemon style, clean line art, flat colors, minimal shading, cel shading, crisp outlines, simple shapes, centered composition, plain white background, high resolution, sharp lines, game asset style.\n2. A negative prompt listing undesirable traits (photorealistic, realistic, 3d render, hyperrealistic, detailed textures, fur texture, skin pores, cinematic lighting, dramatic shadows, depth of field, complex background, clutter, noise, grain). Respond in JSON: { "positive": "...", "negative": "..." }. Include the two parent pokemon names in the positive prompt.Important: this is for stable difussion so it must fit the 77 token limit.',
       },
       {
         role: 'user',
         content: `Fusion Name: ${fusionName}\nFusion Description: ${fusionDescription}`,
       },
     ],
-    max_tokens: 300,
-    temperature: 0.7,
+    max_tokens: 500,
+    temperature: 0.95
   }
 
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -103,6 +103,7 @@ export async function generateImagePrompts(
     try {
       const parsed = JSON.parse(content)
       if (typeof parsed.positive === 'string' && typeof parsed.negative === 'string') {
+        console.log('[HF PROMPTS]', { positive: parsed.positive, negative: parsed.negative })
         return { ok: true, prompts: { positive: parsed.positive, negative: parsed.negative } }
       }
     } catch (err) {
@@ -152,7 +153,7 @@ export async function generateFusionText(
       {
         role: 'system',
         content:
-          'You are a creative Pokemon fusion generator. Given two Pokemon, create a unique fusion with a blended name and vivid description.',
+          'You are a creative Pokemon fusion generator. Given two Pokemon, create a unique fusion with a blended name and vivid short description.',
       },
       {
         role: 'user',
@@ -160,7 +161,7 @@ export async function generateFusionText(
       },
     ],
     max_tokens: 300,
-    temperature: 0.8,
+    temperature: 0.9,
   }
 
   for (let attempt = 0; attempt < 2; attempt++) {
