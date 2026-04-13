@@ -10,7 +10,9 @@ export async function generateImagePrompts(
   apiToken: string,
   modelId: string,
   fusionName: string,
-  fusionDescription: string
+  fusionDescription: string,
+  parent1Name: string,
+  parent2Name: string
 ): Promise<
   | { ok: true; prompts: { positive: string; negative: string } }
   | { ok: false; error: HFRateLimitError | HFError }
@@ -21,11 +23,11 @@ export async function generateImagePrompts(
       {
         role: 'system',
         content:
-          'Given a Pokemon fusion name and description, generate two prompts:\n1. A positive prompt for official pokedex illustration style, pokemon style, clean line art, flat colors, minimal shading, cel shading, crisp outlines, simple shapes, centered composition, plain white background, high resolution, sharp lines, game asset style.\n2. A negative prompt listing undesirable traits (photorealistic, realistic, 3d render, hyperrealistic, detailed textures, fur texture, skin pores, cinematic lighting, dramatic shadows, depth of field, complex background, clutter, noise, grain). Respond in JSON: { "positive": "...", "negative": "..." }. Include the two parent pokemon names in the positive prompt.Important: this is for stable difussion so it must fit the 77 token limit.',
+          'Given a Pokemon fusion name and description, generate two prompts:\n1. A positive prompt for official pokedex illustration style, pokemon style, clean line art, flat colors, minimal shading, cel shading, crisp outlines, simple shapes, centered composition, plain white background, high resolution, sharp lines, game asset style.\n2. A negative prompt listing undesirable traits (text, photorealistic, realistic, 3d render, hyperrealistic, detailed textures, fur texture, skin pores, cinematic lighting, dramatic shadows, depth of field, complex background, clutter, noise, grain). Respond in JSON: { "positive": "...", "negative": "..." }. Include the two parent pokemon names in the positive prompt.Important: this is for stable difussion so it must fit the 77 token limit.',
       },
       {
         role: 'user',
-        content: `Fusion Name: ${fusionName}\nFusion Description: ${fusionDescription}`,
+        content: `Fusion Name: ${fusionName}\nFusion Description: ${fusionDescription}\nParent 1: ${parent1Name}\nParent 2: ${parent2Name}`,
       },
     ],
     max_tokens: 500,

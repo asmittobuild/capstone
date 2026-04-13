@@ -144,7 +144,7 @@ export async function generateFusion(opts: GenerateFusionOptions): Promise<Gener
         if (!avail) return null
 
         // Try to generate prompts using HF API
-        const promptResult = await generateImagePrompts(apiToken, modelId, name, description)
+        const promptResult = await generateImagePrompts(apiToken, modelId, name, description, parent1.name, parent2.name)
         let positivePrompt: string
         let negativePrompt: string
         if (promptResult.ok) {

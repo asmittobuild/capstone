@@ -1,34 +1,39 @@
-import type { Fusion } from '../../types'
-import { sanitize } from '../../lib/sanitize'
-import { TypeBadge } from '../ui/TypeBadge'
-import { StatBar } from './StatBar'
-import { Button } from '../ui/Button'
-import pokemonLogo from '../../assets/pokemon-logo.svg'
+import type { Fusion } from '../../types';
+import { sanitize } from '../../lib/sanitize';
+import { TypeBadge } from '../ui/TypeBadge';
+import { StatBar } from './StatBar';
+import { Button } from '../ui/Button';
+import pokemonLogo from '../../assets/pokemon-logo.svg';
 
 interface FusionCardProps {
-  fusion: Fusion
-  onSave?: () => void
-  onDelete?: () => void
-  onRegenerate?: () => void
-  isSaved?: boolean
-  isRegenerating?: boolean
+  fusion: Fusion;
+  onSave?: () => void;
+  onDelete?: () => void;
+  onRegenerate?: () => void;
+  isSaved?: boolean;
+  isRegenerating?: boolean;
+  isSaving?: boolean;
+  isDeleting?: boolean;
 }
 
-export function FusionCard({
-  fusion,
-  onSave,
-  onDelete,
-  onRegenerate,
-  isSaved,
-  isRegenerating,
-}: FusionCardProps) {
+export function FusionCard(props: FusionCardProps) {
+  const {
+    fusion,
+    onSave,
+    onDelete,
+    onRegenerate,
+    isSaved,
+    isRegenerating,
+    isSaving,
+    isDeleting,
+  } = props;
   const totalStats =
     fusion.stats.hp +
     fusion.stats.attack +
     fusion.stats.defense +
     fusion.stats.spAttack +
     fusion.stats.spDefense +
-    fusion.stats.speed
+    fusion.stats.speed;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-md mx-auto transition-all duration-300">
@@ -113,13 +118,18 @@ export function FusionCard({
             </Button>
           )}
           {onSave && !isSaved && (
-            <Button variant="primary" onClick={onSave}>
+            <Button variant="primary" onClick={onSave} loading={isSaving}>
               Save
             </Button>
           )}
           {!isSaved && onDelete && (
-            <Button variant="danger" onClick={onDelete}>
+            <Button variant="danger" onClick={onDelete} loading={isDeleting}>
               Discard
+            </Button>
+          )}
+          {isSaved && onDelete && (
+            <Button variant="danger" onClick={onDelete} loading={isDeleting}>
+              Delete
             </Button>
           )}
         </div>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFusion } from '../context/FusionContext'
 import { useSettings } from '../context/SettingsContext'
@@ -17,25 +18,30 @@ export function HomePage() {
     rateLimitCooldown,
     generateRandom,
     regenerate,
-    saveFusion,
   } = useFusion()
   const { toast, show, dismiss } = useToast()
 
+  // Spinner state for save button
+  const [saving, setSaving] = useState(false)
+
   // Handler to wrap saveFusion and show toast
   const handleSaveFusion = async () => {
+    setSaving(true)
     try {
       const { saveFusion: dbSave } = await import('../services/db')
       if (!currentFusion) return
-      const result = await dbSave(currentFusion)
-      if (result.ok) {
-        show('Fusion saved!', 'success')
-      } else {
-        show(result.message || 'Failed to save fusion.', 'error')
+        const result = await dbSave(currentFusion)
+        if (result.ok) {
+          show('Fusion saved!', 'success')
+        } else {
+          show(result.message || 'Failed to save fusion.', 'error')
+        }
+      } catch {
+        show('Failed to save fusion. Supabase may be unreachable.', 'error')
+      } finally {
+        setSaving(false)
       }
-    } catch {
-      show('Failed to save fusion. Supabase may be unreachable.', 'error')
     }
-  }
 
   const handleGenerate = () => {
     if (isFirstRun) {
@@ -91,15 +97,16 @@ export function HomePage() {
 
       {isLoading && <SkeletonCard />}
 
-      {currentFusion && !isLoading && (
-        <FusionCard
-          fusion={currentFusion}
-          onRegenerate={regenerate}
-          onSave={handleSaveFusion}
-          onDelete={handleDiscardFusion}
-          isRegenerating={isLoading}
-        />
-      )}
+        {!isLoading && currentFusion && (
+          <FusionCard
+            fusion={currentFusion}
+            onRegenerate={regenerate}
+            onSave={handleSaveFusion}
+            onDelete={handleDiscardFusion}
+            isRegenerating={isLoading}
+            isSaving={saving}
+          />
+        )}
 
       {toast && <Toast toast={toast} onDismiss={dismiss} />}
     </div>
