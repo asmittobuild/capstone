@@ -87,7 +87,7 @@ export async function generateFusionText(
       return { ok: false, error: { kind: 'server', message: `Server error: ${response.status}` } }
     }
 
-    let data: HFChatResponse
+    let data: unknown
     try {
       data = await response.json()
     } catch {
@@ -95,8 +95,22 @@ export async function generateFusionText(
       return { ok: false, error: { kind: 'empty-response', message: 'Malformed response' } }
     }
 
-    const content = data?.choices?.[0]?.message?.content?.trim()
+    // Handle non-OK responses that aren't 401/429/5xx (e.g. 400, 403, 404, 422)
+    if (!response.ok) {
+      const raw = (data as Record<string, unknown>)?.error
+      let errMsg = `HTTP ${response.status}`
+      if (typeof raw === 'string') {
+        errMsg = raw
+      } else if (raw && typeof raw === 'object' && 'message' in raw) {
+        errMsg = String((raw as Record<string, unknown>).message)
+      }
+      return { ok: false, error: { kind: 'server', message: errMsg } }
+    }
+
+    const typed = data as HFChatResponse
+    const content = typed?.choices?.[0]?.message?.content?.trim()
     if (!content) {
+      console.warn('[HF] Unexpected response shape:', JSON.stringify(data).slice(0, 500))
       if (attempt === 0) continue
       return { ok: false, error: { kind: 'empty-response', message: 'Empty AI response' } }
     }

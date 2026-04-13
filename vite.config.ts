@@ -6,6 +6,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/capstone/',
   plugins: [react()],
+  server: {
+    proxy: {
+      '/sd-api': {
+        target: process.env.VITE_SD_API_URL || 'http://192.168.4.100:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sd-api/, ''),
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

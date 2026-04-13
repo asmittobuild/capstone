@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, type ReactNode } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import type { Settings } from '../types'
 
-const DEFAULT_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3'
+const DEFAULT_MODEL = 'HuggingFaceH4/zephyr-7b-beta'
 
 interface SettingsContextValue extends Settings {
   setApiToken: (token: string | null) => void

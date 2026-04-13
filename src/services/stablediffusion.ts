@@ -3,6 +3,8 @@ const HEALTH_TIMEOUT_MS = 2_000
 const GENERATE_TIMEOUT_MS = 15_000
 
 function getBaseUrl(): string {
+  // In dev, use Vite proxy to avoid CORS; in production, hit directly
+  if (import.meta.env.DEV) return '/sd-api'
   return import.meta.env.VITE_SD_API_URL || DEFAULT_BASE_URL
 }
 
