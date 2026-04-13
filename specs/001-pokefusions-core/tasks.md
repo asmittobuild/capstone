@@ -17,15 +17,15 @@
 
 **Purpose**: Project initialization, tooling, and base configuration
 
-- [ ] T001 Initialize Vite + React + TypeScript project with `npm create vite@latest` in repository root
-- [ ] T002 Install core dependencies: react-router-dom, dompurify, @types/dompurify, uuid, @types/uuid, @supabase/supabase-js
-- [ ] T003 [P] Configure Tailwind CSS 3 with dark mode class strategy in tailwind.config.ts and src/index.css
-- [ ] T004 [P] Configure Vitest and React Testing Library with coverage thresholds (≥80% on src/lib/ and src/services/) in vite.config.ts and tests/setup.ts
-- [ ] T005 [P] Configure ESLint and Prettier for TypeScript + React in .eslintrc.cjs and .prettierrc
-- [ ] T006 [P] Configure Vite for GitHub Pages deployment with correct base path in vite.config.ts
-- [ ] T007 Create base TypeScript types for Pokemon, PokemonStats, Fusion, FusionParent, and Settings in src/types.ts
-- [ ] T008 [P] Create .env.example with VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and VITE_SD_API_URL placeholders, and add .env to .gitignore
-- [ ] T008b Create `fusions` table in Supabase project using SQL DDL from contracts/supabase.md (manual step via Supabase SQL Editor)
+- [x] T001 Initialize Vite + React + TypeScript project with `npm create vite@latest` in repository root
+- [x] T002 Install core dependencies: react-router-dom, dompurify, @types/dompurify, uuid, @types/uuid, @supabase/supabase-js
+- [x] T003 [P] Configure Tailwind CSS 3 with dark mode class strategy in tailwind.config.ts and src/index.css
+- [x] T004 [P] Configure Vitest and React Testing Library with coverage thresholds (≥80% on src/lib/ and src/services/) in vite.config.ts and tests/setup.ts
+- [x] T005 [P] Configure ESLint and Prettier for TypeScript + React in .eslintrc.cjs and .prettierrc
+- [x] T006 [P] Configure Vite for GitHub Pages deployment with correct base path in vite.config.ts
+- [x] T007 Create base TypeScript types for Pokemon, PokemonStats, Fusion, FusionParent, and Settings in src/types.ts
+- [x] T008 [P] Create .env.example with VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and VITE_SD_API_URL placeholders, and add .env to .gitignore
+- [x] T008b Create `fusions` table in Supabase project using SQL DDL from contracts/supabase.md (manual step via Supabase SQL Editor)
 
 ---
 
@@ -35,16 +35,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Add bundled Pokemon dataset (809 species, Gens 1–7) as src/data/pokedex.json
-- [ ] T010 Implement Pokemon data access module with getAll, getById, getByName, and getTypes utilities in src/lib/pokemon.ts
-- [ ] T011 [P] Implement DOMPurify sanitization wrapper with restricted allow-list (b, i, em, strong, p, br) in src/lib/sanitize.ts
-- [ ] T012 [P] Implement deterministic stat averaging function (Math.round per stat) in src/lib/fusion.ts
-- [ ] T013 [P] Implement type-compatibility check function (exclude pairs with identical type combinations) in src/lib/fusion.ts
-- [ ] T014 Implement Hugging Face chat completions client with auth, request/response parsing, rate-limit detection (HTTP 429 + Retry-After header), automatic retry-once on empty or malformed AI responses, and error handling in src/services/huggingface.ts
-- [ ] T015 [P] Implement PokeAPI flavor text client with language filtering, version preference, in-memory caching, and silent fallback in src/services/pokeapi.ts
-- [ ] T016 [P] Implement SDXL image generation client with `GET /health` availability probe, `POST /generate` text-to-image request (1024×1024, guidance_scale 3.0), base64 response handling (`{ image, seed }`), configurable base URL via `VITE_SD_API_URL`, and silent fallback in src/services/stablediffusion.ts (per contracts/stablediffusion-api.md)
-- [ ] T017 [P] Implement useLocalStorage custom hook for typed get/set with JSON serialization in src/hooks/useLocalStorage.ts (used for settings only: API token, model ID, theme)
-- [ ] T018 [P] Implement useToast custom hook for toast notification state management (success, error, info with 3s auto-dismiss) in src/hooks/useToast.ts
+- [x] T009 Add bundled Pokemon dataset (809 species, Gens 1–7) as src/data/pokedex.json
+- [x] T010 Implement Pokemon data access module with getAll, getById, getByName, and getTypes utilities in src/lib/pokemon.ts
+- [x] T011 [P] Implement DOMPurify sanitization wrapper with restricted allow-list (b, i, em, strong, p, br) in src/lib/sanitize.ts
+- [x] T012 [P] Implement deterministic stat averaging function (Math.round per stat) in src/lib/fusion.ts
+- [x] T013 [P] Implement type-compatibility check function (exclude pairs with identical type combinations) in src/lib/fusion.ts
+- [x] T014 Implement Hugging Face chat completions client with auth, request/response parsing, rate-limit detection (HTTP 429 + Retry-After header), automatic retry-once on empty or malformed AI responses, and error handling in src/services/huggingface.ts
+- [x] T015 [P] Implement PokeAPI flavor text client with language filtering, version preference, in-memory caching, and silent fallback in src/services/pokeapi.ts
+- [x] T016 [P] Implement SDXL image generation client with `GET /health` availability probe, `POST /generate` text-to-image request (1024×1024, guidance_scale 3.0), base64 response handling (`{ image, seed }`), configurable base URL via `VITE_SD_API_URL`, and silent fallback in src/services/stablediffusion.ts (per contracts/stablediffusion-api.md)
+- [x] T017 [P] Implement useLocalStorage custom hook for typed get/set with JSON serialization in src/hooks/useLocalStorage.ts (used for settings only: API token, model ID, theme)
+- [x] T018 [P] Implement useToast custom hook for toast notification state management (success, error, info with 3s auto-dismiss) in src/hooks/useToast.ts
 - [ ] T019 Implement SettingsContext provider with apiToken, modelId, theme state (light/dark/system), localStorage persistence, first-run detection, and dark mode class-based switching on document root in src/context/SettingsContext.tsx
 - [ ] T020 [P] Create Toast notification component with auto-dismiss animation and success/error/info variants in src/components/ui/Toast.tsx
 - [ ] T021 [P] Create SkeletonCard loading placeholder component with shimmer animation in src/components/ui/SkeletonCard.tsx
