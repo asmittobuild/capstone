@@ -45,17 +45,6 @@ export function HomePage() {
     generateRandom()
   }
 
-  // Handler for discarding the current fusion (unsaved)
-  const handleDiscardFusion = () => {
-    if (window.confirm('Are you sure you want to discard this fusion?')) {
-      // Remove current fusion from context
-      window.location.reload() // quick way to reset state; for a more robust solution, expose setCurrentFusion in context
-    }
-  }
-
-  // Helper to check if current fusion is saved (by id)
-  const isSaved = false // Always false for now; can be improved if savedFusions is exposed
-
   return (
     <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
       <div className="text-center space-y-2">
@@ -99,8 +88,6 @@ export function HomePage() {
           fusion={currentFusion}
           onRegenerate={regenerate}
           onSave={handleSaveFusion}
-          onDelete={handleDiscardFusion}
-          isSaved={isSaved}
           isRegenerating={isLoading}
         />
       )}
