@@ -195,10 +195,10 @@
 
 **Purpose**: Final polish, validation, and deployment readiness
 
-- [ ] T053 [P] Configure GitHub Pages deployment workflow with Supabase env vars as repository secrets in .github/workflows/deploy.yml
-- [ ] T054 Validate all AI-generated text passes through DOMPurify sanitization — audit every render path for unsanitized content (FR-028)
-- [ ] T055 Run quickstart.md validation: fresh clone, copy .env.example to .env with Supabase credentials, install, dev server, generate fusion, save to Supabase, reload, verify persistence across sessions
-- [ ] T056 Final build verification: npm run build succeeds, preview serves correctly, no console errors
+- [x] T053 [P] Configure GitHub Pages deployment workflow with Supabase env vars as repository secrets in .github/workflows/deploy.yml
+- [x] T054 Validate all AI-generated text passes through DOMPurify sanitization — audit every render path for unsanitized content (FR-028)
+- [x] T055 Run quickstart.md validation: fresh clone, copy .env.example to .env with Supabase credentials, install, dev server, generate fusion, save to Supabase, reload, verify persistence across sessions
+- [x] T056 Final build verification: npm run build succeeds, preview serves correctly, no console errors
 - [ ] T067 Run `npm run test:coverage` and verify ≥80% line coverage on src/lib/ and src/services/ directories per SC-009
 
 ---
