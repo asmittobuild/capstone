@@ -13,36 +13,52 @@ import { Button } from '../components/ui/Button'
 export function SelectPage() {
   const navigate = useNavigate()
   const { isFirstRun } = useSettings()
-  const { currentFusion, isLoading, error, generateManual, regenerate, saveFusion } = useFusion()
+  const { isLoading, error, generateManual, savedFusions } = useFusion()
   const { toast, show, dismiss } = useToast()
-    // Handler to wrap saveFusion and show toast
-    const handleSaveFusion = async () => {
-      try {
-        const { saveFusion: dbSave } = await import('../services/db')
-        if (!currentFusion) return
-        const result = await dbSave(currentFusion)
-        if (result.ok) {
-          show('Fusion saved!', 'success')
-        } else {
-          show(result.message || 'Failed to save fusion.', 'error')
-        }
-      } catch {
-        show('Failed to save fusion. Supabase may be unreachable.', 'error')
-      }
-    }
   const [pokemon1, setPokemon1] = useState<Pokemon | null>(null)
   const [pokemon2, setPokemon2] = useState<Pokemon | null>(null)
+  const [localFusion, setLocalFusion] = useState(null)
 
   const sameSelected = pokemon1 && pokemon2 && pokemon1.id === pokemon2.id
 
-  const handleFuse = () => {
+  const handleFuse = async () => {
     if (isFirstRun) {
       navigate('/settings')
       return
     }
     if (pokemon1 && pokemon2) {
-      generateManual(pokemon1, pokemon2)
+      const { generateFusion } = await import('../lib/fusion')
+      const { apiToken, modelId } = await import('../context/SettingsContext')
+      // fallback to context if available
+      const fusionResult = await generateFusion({
+        apiToken: apiToken || '',
+        modelId: modelId || '',
+        parent1: pokemon1,
+        parent2: pokemon2,
+        mode: 'manual',
+      })
+      if (fusionResult.ok) setLocalFusion(fusionResult.fusion)
+      else setLocalFusion(null)
     }
+  }
+
+  const handleSaveFusion = async () => {
+    try {
+      const { saveFusion: dbSave } = await import('../services/db')
+      if (!localFusion) return
+      const result = await dbSave(localFusion)
+      if (result.ok) {
+        show('Fusion saved!', 'success')
+      } else {
+        show(result.message || 'Failed to save fusion.', 'error')
+      }
+    } catch {
+      show('Failed to save fusion. Supabase may be unreachable.', 'error')
+    }
+  }
+
+  const handleDiscardFusion = () => {
+    setLocalFusion(null)
   }
 
   return (
@@ -89,12 +105,13 @@ export function SelectPage() {
 
       {isLoading && <SkeletonCard />}
 
-      {currentFusion && !isLoading && (
+      {localFusion && !isLoading && (
         <div className="flex justify-center">
           <FusionCard
-            fusion={currentFusion}
-            onRegenerate={regenerate}
+            fusion={localFusion}
             onSave={handleSaveFusion}
+            onDelete={handleDiscardFusion}
+            isSaved={!!savedFusions.find(f => f.id === localFusion.id)}
             isRegenerating={isLoading}
           />
         </div>
