@@ -67,22 +67,22 @@
 
 ### Unit Tests (FR-032) — src/lib/
 
-- [ ] T057 [P] Write unit tests for stat averaging function: verify Math.round per stat, symmetric inputs, zero stats, max stats in tests/unit/fusion.test.ts
-- [ ] T058 [P] Write unit tests for type-compatibility check: identical single-type, identical dual-type, different types, partial overlap in tests/unit/fusion.test.ts
-- [ ] T059 [P] Write unit tests for AI response parser: valid response extraction, fallback name generation, empty response, malformed JSON in tests/unit/fusion.test.ts
-- [ ] T060 [P] Write unit tests for Pokemon data access: getById (valid/invalid), getByName (case-insensitive), getAll count, getTypes in tests/unit/pokemon.test.ts
-- [ ] T061 [P] Write unit tests for DOMPurify sanitization wrapper: strips script tags, preserves allowed tags (b, i, em, strong, p, br), strips attributes, handles empty/null input in tests/unit/sanitize.test.ts
+- [x] T057 [P] Write unit tests for stat averaging function: verify Math.round per stat, symmetric inputs, zero stats, max stats in tests/unit/fusion.test.ts
+- [x] T058 [P] Write unit tests for type-compatibility check: identical single-type, identical dual-type, different types, partial overlap in tests/unit/fusion.test.ts
+- [x] T059 [P] Write unit tests for AI response parser: valid response extraction, fallback name generation, empty response, malformed JSON in tests/unit/fusion.test.ts
+- [x] T060 [P] Write unit tests for Pokemon data access: getById (valid/invalid), getByName (case-insensitive), getAll count, getTypes in tests/unit/pokemon.test.ts
+- [x] T061 [P] Write unit tests for DOMPurify sanitization wrapper: strips script tags, preserves allowed tags (b, i, em, strong, p, br), strips attributes, handles empty/null input in tests/unit/sanitize.test.ts
 
 ### Integration Tests (FR-032) — src/services/
 
-- [ ] T062 [P] Write integration tests for Hugging Face client: auth header construction, request body format, successful response parsing, 429 rate-limit detection with Retry-After header, retry-once on empty response, timeout handling in tests/integration/huggingface.test.ts
-- [ ] T063 [P] Write integration tests for PokeAPI client: flavor text extraction with language filtering, version preference, in-memory cache hit/miss, silent fallback on network error in tests/integration/pokeapi.test.ts
-- [ ] T064 [P] Write integration tests for SDXL client: health probe success/failure, generate request with correct parameters, base64 response handling, silent fallback on timeout/error in tests/integration/stablediffusion.test.ts
-- [ ] T065 [P] Write integration tests for Supabase DB wrapper: save with camelCase↔snake_case mapping, list with descending order, delete by ID, error handling, retry on network failure in tests/integration/db.test.ts
+- [x] T062 [P] Write integration tests for Hugging Face client: auth header construction, request body format, successful response parsing, 429 rate-limit detection with Retry-After header, retry-once on empty response, timeout handling in tests/integration/huggingface.test.ts
+- [x] T063 [P] Write integration tests for PokeAPI client: flavor text extraction with language filtering, version preference, in-memory cache hit/miss, silent fallback on network error in tests/integration/pokeapi.test.ts
+- [x] T064 [P] Write integration tests for SDXL client: health probe success/failure, generate request with correct parameters, base64 response handling, silent fallback on timeout/error in tests/integration/stablediffusion.test.ts
+- [x] T065 [P] Write integration tests for Supabase DB wrapper: save with camelCase↔snake_case mapping, list with descending order, delete by ID, error handling, retry on network failure in tests/integration/db.test.ts
 
 ### Orchestrator Integration Tests (FR-033)
 
-- [ ] T066 Write integration tests for fusion generation orchestrator: full pipeline with all services mocked (random pair → stats → HF text → PokeAPI flavor → SDXL image → assembled Fusion), graceful degradation when optional services unavailable, timeout enforcement in tests/integration/orchestrator.test.ts
+- [x] T066 Write integration tests for fusion generation orchestrator: full pipeline with all services mocked (random pair → stats → HF text → PokeAPI flavor → SDXL image → assembled Fusion), graceful degradation when optional services unavailable, timeout enforcement in tests/integration/orchestrator.test.ts
 
 **Checkpoint**: All unit and integration tests pass. Coverage meets ≥80% on src/lib/ and src/services/.
 
@@ -199,7 +199,7 @@
 - [x] T054 Validate all AI-generated text passes through DOMPurify sanitization — audit every render path for unsanitized content (FR-028)
 - [x] T055 Run quickstart.md validation: fresh clone, copy .env.example to .env with Supabase credentials, install, dev server, generate fusion, save to Supabase, reload, verify persistence across sessions
 - [x] T056 Final build verification: npm run build succeeds, preview serves correctly, no console errors
-- [ ] T067 Run `npm run test:coverage` and verify ≥80% line coverage on src/lib/ and src/services/ directories per SC-009
+- [x] T067 Run `npm run test:coverage` and verify ≥80% line coverage on src/lib/ and src/services/ directories per SC-009
 
 ---
 
