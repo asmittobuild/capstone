@@ -111,7 +111,7 @@ export function SelectPage() {
             fusion={localFusion}
             onSave={handleSaveFusion}
             onDelete={handleDiscardFusion}
-            isSaved={!!savedFusions.find(f => f.id === localFusion.id)}
+            isSaved={false}
             isRegenerating={isLoading}
           />
         </div>
