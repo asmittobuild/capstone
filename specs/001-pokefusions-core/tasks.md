@@ -116,10 +116,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T035 [P] [US2] Create PokemonSelector component with searchable/filterable virtualized grid of 809 Pokemon (virtualization or lazy loading for performance) showing name, sprite placeholder, and types in src/components/PokemonSelector/PokemonSelector.tsx
-- [ ] T036 [P] [US2] Create PokemonCard mini-component for each selectable Pokemon entry in the grid in src/components/PokemonSelector/PokemonCard.tsx
-- [ ] T037 [US2] Implement manual fusion generation flow in FusionContext: accept two specific Pokemon IDs, validate different Pokemon (FR-003), generate fusion same pipeline as random in src/context/FusionContext.tsx
-- [ ] T038 [US2] Create SelectPage with two selection slots, same-Pokemon validation message, search/filter bar, "Fuse" button, and fusion card output in src/pages/SelectPage.tsx
+- [x] T035 [P] [US2] Create PokemonSelector component with searchable/filterable virtualized grid of 809 Pokemon (virtualization or lazy loading for performance) showing name, sprite placeholder, and types in src/components/PokemonSelector/PokemonSelector.tsx
+- [x] T036 [P] [US2] Create PokemonCard mini-component for each selectable Pokemon entry in the grid in src/components/PokemonSelector/PokemonCard.tsx
+- [x] T037 [US2] Implement manual fusion generation flow in FusionContext: accept two specific Pokemon IDs, validate different Pokemon (FR-003), generate fusion same pipeline as random in src/context/FusionContext.tsx
+- [x] T038 [US2] Create SelectPage with two selection slots, same-Pokemon validation message, search/filter bar, "Fuse" button, and fusion card output in src/pages/SelectPage.tsx
 
 **Checkpoint**: User Stories 1 and 2 are both functional. Users can generate fusions randomly or by manual selection.
 
@@ -133,10 +133,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T039 [US3] Implement saved fusions state management in FusionContext: save via Supabase client (all fields including imageBase64 per FR-026), load collection from Supabase, delete from Supabase, show DBErrorBanner when Supabase is unreachable, and retain current fusion in memory for retry (FR-027) in src/context/FusionContext.tsx
-- [ ] T040 [US3] Add Save and Delete action buttons to FusionCard with appropriate visibility (Save when unsaved, Delete when viewing collection) in src/components/FusionCard/FusionCard.tsx
-- [ ] T041 [P] [US3] Create Collection component displaying saved fusions as a grid of FusionCards, with an empty state component showing guidance message when no fusions are saved, in src/components/Collection/Collection.tsx and src/components/Collection/EmptyState.tsx
-- [ ] T042 [US3] Create CollectionPage with Collection component, empty state with guidance, and navigation in src/pages/CollectionPage.tsx
+- [x] T039 [US3] Implement saved fusions state management in FusionContext: save via Supabase client (all fields including imageBase64 per FR-026), load collection from Supabase, delete from Supabase, show DBErrorBanner when Supabase is unreachable, and retain current fusion in memory for retry (FR-027) in src/context/FusionContext.tsx
+- [x] T040 [US3] Add Save and Delete action buttons to FusionCard with appropriate visibility (Save when unsaved, Delete when viewing collection) in src/components/FusionCard/FusionCard.tsx
+- [x] T041 [P] [US3] Create Collection component displaying saved fusions as a grid of FusionCards, with an empty state component showing guidance message when no fusions are saved, in src/components/Collection/Collection.tsx and src/components/Collection/EmptyState.tsx
+- [x] T042 [US3] Create CollectionPage with Collection component, empty state with guidance, and navigation in src/pages/CollectionPage.tsx
 
 **Checkpoint**: User Stories 1–3 are functional. Core experience is complete: generate, view, save, browse, delete.
 
@@ -150,9 +150,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T043 [US4] Implement image generation integration in the fusion orchestrator: probe SDXL API via `GET /health`, call `POST /generate` with fusion description prompt, attach base64 image to Fusion, fall back to null silently in src/lib/fusion.ts
-- [ ] T044 [US4] Add Pokemon logo placeholder asset as src/assets/pokemon-logo.png
-- [ ] T045 [US4] Update FusionCard to display imageBase64 as inline image when present, or Pokemon logo placeholder when null, with smooth fade-in transition in src/components/FusionCard/FusionCard.tsx
+- [x] T043 [US4] Implement image generation integration in the fusion orchestrator: probe SDXL API via `GET /health`, call `POST /generate` with fusion description prompt, attach base64 image to Fusion, fall back to null silently in src/lib/fusion.ts
+- [x] T044 [US4] Add Pokemon logo placeholder asset as src/assets/pokemon-logo.png
+- [x] T045 [US4] Update FusionCard to display imageBase64 as inline image when present, or Pokemon logo placeholder when null, with smooth fade-in transition in src/components/FusionCard/FusionCard.tsx
 
 **Checkpoint**: User Stories 1–4 are functional. Fusions show AI images when available, placeholder when not.
 
@@ -166,8 +166,8 @@
 
 ### Implementation for User Story 5
 
-- [ ] T046 [US5] Implement regenerate action in FusionContext: same parent pair, new HF text generation call, replace name/description/image on current fusion, preserve ID and createdAt in src/context/FusionContext.tsx
-- [ ] T047 [US5] Add Regenerate button to FusionCard with loading state during regeneration and visual indicator that re-save is needed if previously saved in src/components/FusionCard/FusionCard.tsx
+- [x] T046 [US5] Implement regenerate action in FusionContext: same parent pair, new HF text generation call, replace name/description/image on current fusion, preserve ID and createdAt in src/context/FusionContext.tsx
+- [x] T047 [US5] Add Regenerate button to FusionCard with loading state during regeneration and visual indicator that re-save is needed if previously saved in src/components/FusionCard/FusionCard.tsx
 
 **Checkpoint**: User Stories 1–5 are functional. Full generation lifecycle: create, view, save, regenerate, delete.
 
@@ -181,11 +181,11 @@
 
 ### Implementation for User Story 6
 
-- [ ] T048 [US6] Create Settings page with API token input, model ID input with default value, and theme toggle (light/dark/system) in src/pages/SettingsPage.tsx
-- [ ] T049 [US6] Implement system theme preference detection (prefers-color-scheme media query) and theme toggle UI refinement (light/dark/system selector) in src/context/SettingsContext.tsx
-- [ ] T050 [P] [US6] Add responsive layout and navigation (navbar with route links, mobile hamburger menu) in src/App.tsx
-- [ ] T051 [P] [US6] Add Tailwind responsive utilities to all page layouts for 320px–2560px viewport range in src/pages/HomePage.tsx, src/pages/SelectPage.tsx, src/pages/CollectionPage.tsx
-- [ ] T052 [P] [US6] Add CSS transitions and animations for card appearance, theme switching, toast enter/exit, and skeleton shimmer in src/index.css
+- [x] T048 [US6] Create Settings page with API token input, model ID input with default value, and theme toggle (light/dark/system) in src/pages/SettingsPage.tsx
+- [x] T049 [US6] Implement system theme preference detection (prefers-color-scheme media query) and theme toggle UI refinement (light/dark/system selector) in src/context/SettingsContext.tsx
+- [x] T050 [P] [US6] Add responsive layout and navigation (navbar with route links, mobile hamburger menu) in src/App.tsx
+- [x] T051 [P] [US6] Add Tailwind responsive utilities to all page layouts for 320px–2560px viewport range in src/pages/HomePage.tsx, src/pages/SelectPage.tsx, src/pages/CollectionPage.tsx
+- [x] T052 [P] [US6] Add CSS transitions and animations for card appearance, theme switching, toast enter/exit, and skeleton shimmer in src/index.css
 
 **Checkpoint**: All 6 user stories are complete. Full polished experience across devices.
 

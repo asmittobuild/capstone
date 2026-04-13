@@ -3,6 +3,7 @@ import { sanitize } from '../../lib/sanitize'
 import { TypeBadge } from '../ui/TypeBadge'
 import { StatBar } from './StatBar'
 import { Button } from '../ui/Button'
+import pokemonLogo from '../../assets/pokemon-logo.svg'
 
 interface FusionCardProps {
   fusion: Fusion
@@ -40,7 +41,11 @@ export function FusionCard({
             className="h-full w-full object-cover transition-opacity duration-500"
           />
         ) : (
-          <div className="text-6xl opacity-30">⚡</div>
+          <img
+            src={pokemonLogo}
+            alt="Pokemon Logo Placeholder"
+            className="h-32 w-32 opacity-30"
+          />
         )}
       </div>
 
