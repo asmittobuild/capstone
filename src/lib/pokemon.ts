@@ -1,7 +1,30 @@
-import type { Pokemon } from '../types'
+
+import type { Pokemon, RawPokemon } from '../types'
 import pokedexData from '../data/pokedex.json'
 
-const pokedex: Pokemon[] = pokedexData as Pokemon[]
+function mapRawToPokemon(raw: RawPokemon): Pokemon {
+  return {
+    id: raw.id,
+    name: raw.name.english,
+    types: raw.type,
+    stats: {
+      hp: raw.base["HP"],
+      attack: raw.base["Attack"],
+      defense: raw.base["Defense"],
+      spAttack: raw.base["Sp. Attack"],
+      spDefense: raw.base["Sp. Defense"],
+      speed: raw.base["Speed"],
+    },
+    species: raw.species,
+    description: raw.description,
+    evolution: raw.evolution,
+    profile: raw.profile,
+    image: raw.image,
+    raw,
+  }
+}
+
+const pokedex: Pokemon[] = (pokedexData as RawPokemon[]).map(mapRawToPokemon)
 
 export function getAll(): Pokemon[] {
   return pokedex

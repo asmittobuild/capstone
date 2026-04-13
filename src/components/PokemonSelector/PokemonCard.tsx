@@ -17,7 +17,16 @@ export function PokemonCard({ pokemon, selected, onClick }: PokemonCardProps) {
           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
       }`}
     >
-      <span className="text-2xl">🔮</span>
+      {pokemon.image?.sprite ? (
+        <img
+          src={pokemon.image.sprite}
+          alt={pokemon.name}
+          className="w-12 h-12 object-contain mb-1"
+          loading="lazy"
+        />
+      ) : (
+        <span className="text-2xl">🔮</span>
+      )}
       <span className="text-xs font-medium text-gray-900 dark:text-white truncate w-full">
         #{pokemon.id} {pokemon.name}
       </span>
