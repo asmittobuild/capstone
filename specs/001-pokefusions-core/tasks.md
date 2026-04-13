@@ -1,3 +1,9 @@
+# Amendment Tasks: Dynamic SDXL Prompt Generation (2026-04-13)
+
+- [x] A001 [P] Implement Hugging Face API client function to generate both positive and negative prompts for SDXL image generation, using both fusion name and description as input, in src/services/huggingface.ts
+- [x] A002 [P] Integrate dynamic prompt generation into SDXL image generation flow in src/lib/fusion.ts and src/services/stablediffusion.ts
+- [x] A003 [P] Implement error handling and fallback logic for prompt generation failures (use default prompt or skip image if necessary)
+- [x] A004 [P] Add/extend integration tests to cover dynamic prompt generation and error handling in tests/integration/huggingface.test.ts and tests/integration/stablediffusion.test.ts
 # Tasks: PokeFusions Core
 
 **Input**: Design documents from `/specs/001-pokefusions-core/`

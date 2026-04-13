@@ -4,6 +4,7 @@ import { getAll } from './pokemon'
 import { generateFusionText, type HFResult } from '../services/huggingface'
 import { getFlavorText } from '../services/pokeapi'
 import * as sd from '../services/stablediffusion'
+import { generateImagePrompts } from '../services/huggingface'
 
 export function averageStats(a: PokemonStats, b: PokemonStats): PokemonStats {
   return {
@@ -132,13 +133,34 @@ export async function generateFusion(opts: GenerateFusionOptions): Promise<Gener
 
   const { name, description } = parseAIResponse(hfResult.content, parent1.name, parent2.name)
 
+
   // 3. Optional PokeAPI flavor text (non-blocking, 3s timeout built into service)
   // 4. Optional SDXL image (non-blocking, 15s timeout built into service)
   const [flavorText, imageResult] = await Promise.all([
     getFlavorText(parent1.id).catch(() => null),
-    sd.isAvailable().then((avail) =>
-      avail ? sd.generateImage(`${name}, fusion of ${parent1.name} and ${parent2.name}`) : null,
-    ).catch(() => null),
+    (async () => {
+      try {
+        const avail = await sd.isAvailable()
+        if (!avail) return null
+
+        // Try to generate prompts using HF API
+        const promptResult = await generateImagePrompts(apiToken, modelId, name, description)
+        let positivePrompt: string
+        let negativePrompt: string
+        if (promptResult.ok) {
+          positivePrompt = promptResult.prompts.positive
+          negativePrompt = promptResult.prompts.negative
+        } else {
+          // Fallback: use a default prompt and negative prompt
+          positivePrompt = `Pokemon-style creature fusion, digital art, vibrant colors, ${name}, fusion of ${parent1.name} and ${parent2.name}, game art, clean lines, white background`
+          negativePrompt = 'ugly, deformed, blurry, low quality, worst quality'
+        }
+        return await sd.generateImage(positivePrompt, negativePrompt)
+      } catch (err) {
+        // On any error, skip image generation
+        return null
+      }
+    })(),
   ])
 
   const fusion: Fusion = {

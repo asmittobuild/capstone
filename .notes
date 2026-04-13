@@ -35,4 +35,18 @@ then analyze for consistency
 
 then proceeded to task to issues
 
-used subagents to create them in batches
+used subagents to create them in batches (didn't do it in parallel)
+
+implement from issues
+
+it figured out structure changes while implementing
+
+app didn't work otb
+
+the app worked pretty much out of the box after configuring the right model on HF
+
+I ran out of sonnet at this point and got forced to gpt
+
+the major gap I see is that in many cases things we would assume would be clarified are not (how to generate the image for example)
+I let it run and then I worked on an update to see how the flow would be. but when I did; I thought it would basically update the tasks needed to do the new thing from scratch; but it instead updated them based on the existing code; so it assumed there was code already present; so the end result was an inconssitent spec 99% creating new code but with a task to update code that (if ran from scratch) wouldn't exist
+So i pushed on that; and it basically said 'oh yeah i should've done a patch (which is what I expected)

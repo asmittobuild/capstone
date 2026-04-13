@@ -25,7 +25,7 @@ export interface SDGenerateResult {
   seed: number
 }
 
-export async function generateImage(prompt: string): Promise<SDGenerateResult | null> {
+export async function generateImage(prompt: string, negativePrompt: string): Promise<SDGenerateResult | null> {
   try {
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), GENERATE_TIMEOUT_MS)
@@ -33,8 +33,8 @@ export async function generateImage(prompt: string): Promise<SDGenerateResult | 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        prompt: `Pokemon-style creature fusion, digital art, vibrant colors, ${prompt}, game art, clean lines, white background`,
-        negative_prompt: 'ugly, deformed, blurry, low quality, worst quality',
+        prompt,
+        negative_prompt: negativePrompt,
         width: 1024,
         height: 1024,
         steps: 30,

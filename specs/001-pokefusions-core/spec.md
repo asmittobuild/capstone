@@ -1,3 +1,9 @@
+# Amendments
+
+## 2026-04-13: Dynamic SDXL Prompt Generation
+- FR-013 is amended: Instead of hardcoded prompts, the system must generate both positive and negative prompts for SDXL image generation using the Hugging Face API, based on fusion details.
+- Tasks T016a and T043 updated accordingly. See research.md and tasks.md for implementation details.
+
 # Feature Specification: PokeFusions Core
 
 **Feature Branch**: `001-pokefusions-core`  
