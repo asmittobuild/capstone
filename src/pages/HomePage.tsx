@@ -4,6 +4,8 @@ import { useSettings } from '../context/SettingsContext'
 import { FusionCard } from '../components/FusionCard/FusionCard'
 import { SkeletonCard } from '../components/ui/SkeletonCard'
 import { Button } from '../components/ui/Button'
+import { useToast } from '../hooks/useToast'
+import { Toast } from '../components/ui/Toast'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -17,6 +19,23 @@ export function HomePage() {
     regenerate,
     saveFusion,
   } = useFusion()
+  const { toast, show, dismiss } = useToast()
+
+  // Handler to wrap saveFusion and show toast
+  const handleSaveFusion = async () => {
+    try {
+      const { saveFusion: dbSave } = await import('../services/db')
+      if (!currentFusion) return
+      const result = await dbSave(currentFusion)
+      if (result.ok) {
+        show('Fusion saved!', 'success')
+      } else {
+        show(result.message || 'Failed to save fusion.', 'error')
+      }
+    } catch {
+      show('Failed to save fusion. Supabase may be unreachable.', 'error')
+    }
+  }
 
   const handleGenerate = () => {
     if (isFirstRun) {
@@ -68,10 +87,12 @@ export function HomePage() {
         <FusionCard
           fusion={currentFusion}
           onRegenerate={regenerate}
-          onSave={saveFusion}
+          onSave={handleSaveFusion}
           isRegenerating={isLoading}
         />
       )}
+
+      {toast && <Toast toast={toast} onDismiss={dismiss} />}
     </div>
   )
 }

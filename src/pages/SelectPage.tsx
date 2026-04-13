@@ -5,6 +5,8 @@ import { useFusion } from '../context/FusionContext'
 import { useSettings } from '../context/SettingsContext'
 import { PokemonSelector } from '../components/PokemonSelector/PokemonSelector'
 import { FusionCard } from '../components/FusionCard/FusionCard'
+import { useToast } from '../hooks/useToast'
+import { Toast } from '../components/ui/Toast'
 import { SkeletonCard } from '../components/ui/SkeletonCard'
 import { Button } from '../components/ui/Button'
 
@@ -12,6 +14,22 @@ export function SelectPage() {
   const navigate = useNavigate()
   const { isFirstRun } = useSettings()
   const { currentFusion, isLoading, error, generateManual, regenerate, saveFusion } = useFusion()
+  const { toast, show, dismiss } = useToast()
+    // Handler to wrap saveFusion and show toast
+    const handleSaveFusion = async () => {
+      try {
+        const { saveFusion: dbSave } = await import('../services/db')
+        if (!currentFusion) return
+        const result = await dbSave(currentFusion)
+        if (result.ok) {
+          show('Fusion saved!', 'success')
+        } else {
+          show(result.message || 'Failed to save fusion.', 'error')
+        }
+      } catch {
+        show('Failed to save fusion. Supabase may be unreachable.', 'error')
+      }
+    }
   const [pokemon1, setPokemon1] = useState<Pokemon | null>(null)
   const [pokemon2, setPokemon2] = useState<Pokemon | null>(null)
 
@@ -76,11 +94,13 @@ export function SelectPage() {
           <FusionCard
             fusion={currentFusion}
             onRegenerate={regenerate}
-            onSave={saveFusion}
+            onSave={handleSaveFusion}
             isRegenerating={isLoading}
           />
         </div>
       )}
+
+      {toast && <Toast toast={toast} onDismiss={dismiss} />}
     </div>
   )
 }
