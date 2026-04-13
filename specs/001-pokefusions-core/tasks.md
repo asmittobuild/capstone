@@ -45,15 +45,15 @@
 - [x] T016 [P] Implement SDXL image generation client with `GET /health` availability probe, `POST /generate` text-to-image request (1024×1024, guidance_scale 3.0), base64 response handling (`{ image, seed }`), configurable base URL via `VITE_SD_API_URL`, and silent fallback in src/services/stablediffusion.ts (per contracts/stablediffusion-api.md)
 - [x] T017 [P] Implement useLocalStorage custom hook for typed get/set with JSON serialization in src/hooks/useLocalStorage.ts (used for settings only: API token, model ID, theme)
 - [x] T018 [P] Implement useToast custom hook for toast notification state management (success, error, info with 3s auto-dismiss) in src/hooks/useToast.ts
-- [ ] T019 Implement SettingsContext provider with apiToken, modelId, theme state (light/dark/system), localStorage persistence, first-run detection, and dark mode class-based switching on document root in src/context/SettingsContext.tsx
-- [ ] T020 [P] Create Toast notification component with auto-dismiss animation and success/error/info variants in src/components/ui/Toast.tsx
-- [ ] T021 [P] Create SkeletonCard loading placeholder component with shimmer animation in src/components/ui/SkeletonCard.tsx
-- [ ] T022 [P] Create Button component with loading, disabled, and variant states in src/components/ui/Button.tsx
-- [ ] T023 [P] Create TypeBadge component for Pokemon type display with type-specific colors in src/components/ui/TypeBadge.tsx
-- [ ] T024 Set up HashRouter with routes for home (/), select (/select), collection (/collection), and settings (/settings) in src/App.tsx
-- [ ] T025 Create main entry point mounting App with SettingsContext provider in src/main.tsx
-- [ ] T026 Initialize Supabase client using createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY) and implement provider-agnostic wrapper with save, list, delete operations, camelCase↔snake_case field mapping, error handling, and retry on network failure in src/services/db.ts (per contracts/supabase.md)
-- [ ] T027 [P] Create DBErrorBanner component that appears when Supabase is unreachable, with informative message and retry button (FR-027) in src/components/ui/DBErrorBanner.tsx
+- [x] T019 Implement SettingsContext provider with apiToken, modelId, theme state (light/dark/system), localStorage persistence, first-run detection, and dark mode class-based switching on document root in src/context/SettingsContext.tsx
+- [x] T020 [P] Create Toast notification component with auto-dismiss animation and success/error/info variants in src/components/ui/Toast.tsx
+- [x] T021 [P] Create SkeletonCard loading placeholder component with shimmer animation in src/components/ui/SkeletonCard.tsx
+- [x] T022 [P] Create Button component with loading, disabled, and variant states in src/components/ui/Button.tsx
+- [x] T023 [P] Create TypeBadge component for Pokemon type display with type-specific colors in src/components/ui/TypeBadge.tsx
+- [x] T024 Set up HashRouter with routes for home (/), select (/select), collection (/collection), and settings (/settings) in src/App.tsx
+- [x] T025 Create main entry point mounting App with SettingsContext provider in src/main.tsx
+- [x] T026 Initialize Supabase client using createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY) and implement provider-agnostic wrapper with save, list, delete operations, camelCase↔snake_case field mapping, error handling, and retry on network failure in src/services/db.ts (per contracts/supabase.md)
+- [x] T027 [P] Create DBErrorBanner component that appears when Supabase is unreachable, with informative message and retry button (FR-027) in src/components/ui/DBErrorBanner.tsx
 
 **Checkpoint**: Foundation ready — all shared services, Supabase client, utilities, types, and UI primitives are in place. User story implementation can now begin.
 
