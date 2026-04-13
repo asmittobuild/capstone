@@ -1,13 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFusion } from '../context/FusionContext'
 import { Collection } from '../components/Collection/Collection'
 import { DBErrorBanner } from '../components/ui/DBErrorBanner'
 
 export function CollectionPage() {
   const { savedFusions, deleteFusion, loadCollection, dbError } = useFusion()
+  const [isCollectionLoading, setIsCollectionLoading] = useState(true)
 
   useEffect(() => {
-    loadCollection()
+    setIsCollectionLoading(true)
+    loadCollection().finally(() => setIsCollectionLoading(false))
   }, [loadCollection])
 
   return (
@@ -18,7 +20,13 @@ export function CollectionPage() {
 
       {dbError && <DBErrorBanner onRetry={loadCollection} />}
 
-      <Collection fusions={savedFusions} onDelete={deleteFusion} />
+      {isCollectionLoading ? (
+        <div className="flex justify-center py-12">
+          <span className="text-gray-500 dark:text-gray-400 text-lg">Loading...</span>
+        </div>
+      ) : (
+        <Collection fusions={savedFusions} onDelete={deleteFusion} />
+      )}
     </div>
   )
 }
