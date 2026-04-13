@@ -121,6 +121,11 @@ export function FusionCard({
               Discard
             </Button>
           )}
+          {isSaved && onDelete && (
+            <Button variant="danger" onClick={onDelete}>
+              Delete
+            </Button>
+          )}
         </div>
       </div>
     </div>
