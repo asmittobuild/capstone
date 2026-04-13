@@ -166,6 +166,7 @@ export function FusionProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadCollection = useCallback(async () => {
+    setIsLoading(true)
     try {
       const { listFusions } = await import('../services/db')
       const result = await listFusions()
@@ -177,6 +178,8 @@ export function FusionProvider({ children }: { children: ReactNode }) {
       }
     } catch {
       setDbError('Failed to load collection. Supabase may be unreachable.')
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
