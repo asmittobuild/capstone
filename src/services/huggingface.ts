@@ -155,7 +155,7 @@ export async function generateFusionText(
       {
         role: 'system',
         content:
-          'You are a creative Pokemon fusion generator. Given two Pokemon, create a unique fusion with a blended name and vivid short description.',
+          'You are a creative Pokemon fusion generator. Given two Pokemon, create a unique fusion with a new name that blends the two Pokemon names together (if possible in a smart/witty) way) and vivid short description.',
       },
       {
         role: 'user',
